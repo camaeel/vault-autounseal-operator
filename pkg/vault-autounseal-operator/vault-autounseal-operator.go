@@ -1,10 +1,10 @@
-package vaultUnsealOperator
+package vaultAutounsealOperator
 
 import (
 	"context"
 	"fmt"
 
-	"github.com/camaeel/vault-unseal-operator/pkg/utils/logger"
+	"github.com/camaeel/vault-autounseal-operator/pkg/utils/logger"
 )
 
 func Exec(ctx context.Context) {

@@ -4,7 +4,7 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/camaeel/vault-unseal-operator/pkg/config"
+	"github.com/camaeel/vault-autounseal-operator/pkg/config"
 )
 
 var logger *slog.Logger

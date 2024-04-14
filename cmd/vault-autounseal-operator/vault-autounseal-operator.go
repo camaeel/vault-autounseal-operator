@@ -4,9 +4,9 @@ import (
 	"context"
 	"flag"
 
-	"github.com/camaeel/vault-unseal-operator/pkg/config"
-	"github.com/camaeel/vault-unseal-operator/pkg/utils/logger"
-	vaultUnsealOperator "github.com/camaeel/vault-unseal-operator/pkg/vault-unseal-operator"
+	"github.com/camaeel/vault-autounseal-operator/pkg/config"
+	"github.com/camaeel/vault-autounseal-operator/pkg/utils/logger"
+	vaultUnsealOperator "github.com/camaeel/vault-autounseal-operator/pkg/vault-autounseal-operator"
 )
 
 func main() {
