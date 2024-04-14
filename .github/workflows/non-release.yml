@@ -73,6 +73,7 @@ jobs:
         id: docker_images
         run: |
           set -eux
+          cat dist/artifacts.json
           DOCKER_IMAGES=`jq -r -c '[.[] | select(.type=="Docker Image") | .name]' dist/artifacts.json`
           echo "docker_images=$DOCKER_IMAGES" >> "$GITHUB_OUTPUT"
 
