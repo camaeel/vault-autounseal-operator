@@ -3,6 +3,8 @@ package config
 import (
 	"fmt"
 	"strings"
+
+	"k8s.io/client-go/kubernetes"
 )
 
 type Config struct {
@@ -12,6 +14,9 @@ type Config struct {
 	StsSelectorMap      map[string]string
 	PodSelector         string
 	StatefulsetSelector string
+	LeaseName           string
+	LeaseNamespace      string
+	K8sClient           kubernetes.Interface
 }
 
 func (cfg *Config) Validate() error {

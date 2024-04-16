@@ -1,5 +1,9 @@
 all: clean test build
 
+
+release:
+	goreleaser release --snapshot --clean
+
 generate: 
 	go generate ./...
 

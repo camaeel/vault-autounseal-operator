@@ -25,6 +25,9 @@ func main() {
 	flag.StringVar(&cfg.Namespace, "namespace", "vault", "Namespace running vault")
 	// kubeconfig := flag.String("kubeconfig", "", "Overwrite kubeconfig path")
 
+	flag.StringVar(&cfg.LeaseName, "leader-election-lease-name", "vault-autounseal-leader", "Name of the lease object for leader election")
+	flag.StringVar(&cfg.LeaseNamespace, "leader-election-lease-namespace", "", "Name of the namespace with lease object for leader election. If empty use the same namespace as the application is running in")
+
 	flag.Parse()
 	err := cfg.Validate()
 	if err != nil {
@@ -34,5 +37,5 @@ func main() {
 	ctx := context.TODO()
 
 	logger.SetupLogging(cfg)
-	vaultUnsealOperator.Exec(ctx)
+	vaultUnsealOperator.Exec(ctx, cfg)
 }
