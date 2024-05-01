@@ -1,0 +1,10 @@
+ingressController:
+  ingressClassAnnotations:
+    ingressclass.kubernetes.io/is-default-class: "true"
+proxy:
+  type: NodePort
+  http:
+    nodePort: 32080
+
+  tls:
+    nodePort: 32443

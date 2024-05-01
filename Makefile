@@ -31,3 +31,30 @@ docker_kind_load: docker
 docker_debug_kind_load: docker_debug
 	kind load docker-image vault-autounseal-operator:debug
 
+kind:
+	kind create cluster \
+		--wait 120s \
+		--config manifests/kind-config.yaml
+
+kind_install:
+	helm repo add cert-manager https://charts.jetstack.io
+	helm repo update
+	helm upgrade --install cert-manager cert-manager/cert-manager \
+  --namespace cert-manager \
+  --create-namespace \
+  --set installCRDs=true \
+  --wait
+	helm repo add kong https://charts.konghq.com 
+	helm repo update
+	helm upgrade --install kong kong/kong \
+		--namespace kong --create-namespace \
+		--values manifests/kong-values.yml \
+		--wait
+	kubectl create namespace vault || echo 0
+	kubectl apply -f manifests/certs.yml
+	helm repo add hashicorp https://helm.releases.hashicorp.com/
+	helm repo update
+	helm upgrade --install --namespace vault \
+		vault hashicorp/vault \
+		--values manifests/vault-values.yml \
+		--wait

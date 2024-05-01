@@ -1,0 +1,52 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: selfsigned
+spec:
+  selfSigned: {}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: kong-gateway-proxy
+  namespace: kong
+spec:
+  commonName: cluster.local
+  dnsNames:
+    - '*.cluster.local'
+  duration: 2160h0m0s
+  issuerRef:
+    kind: ClusterIssuer
+    name: selfsigned
+  renewBefore: 360h0m0s
+  secretName: kong-gateway-proxy-cert
+---
+# certificate used for vault internal communication
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: vault-tls
+  namespace: vault
+spec:
+  secretName: vault-tls
+  duration: 24h
+  renewBefore: 12h
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  issuerRef:
+    name: selfsigned
+    kind: ClusterIssuer
+    group: cert-manager.io
+  usages:
+    - server auth
+    - client auth
+  commonName: vault.vault
+  dnsNames:
+    - "vault.vault"
+    - "vault.vault.svc"
+    - "vault.vault.svc.cluster.local"
+    - "*.vault-internal"
+    - "*.vault-internal.vault"
+    - "*.vault-internal.vault.svc"
+    - "*.vault-internal.vault.svc.cluster.local"

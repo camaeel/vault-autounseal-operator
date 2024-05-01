@@ -11,6 +11,7 @@ import (
 	"github.com/camaeel/vault-autounseal-operator/pkg/config"
 	"github.com/camaeel/vault-autounseal-operator/pkg/kubeclient"
 	"github.com/camaeel/vault-autounseal-operator/pkg/utils/logger"
+	podhandler "github.com/camaeel/vault-autounseal-operator/pkg/vault-autounseal-operator/pod_handler"
 	"k8s.io/client-go/informers"
 	"k8s.io/client-go/tools/cache"
 )
@@ -49,7 +50,7 @@ func Exec(ctx context.Context, cfg *config.Config) error {
 				slog.Error("Timed out waiting for caches to sync")
 				cancel()
 			}
-			_, err := informer.AddEventHandler(cache.ResourceEventHandlerFuncs{})
+			_, err := informer.AddEventHandler(podhandler.GetPodHandlerFunctions())
 			if err != nil {
 				slog.Error("Failed to add event handler: %v", err)
 				cancel()
