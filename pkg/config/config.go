@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"k8s.io/client-go/kubernetes"
 )
@@ -17,6 +18,7 @@ type Config struct {
 	LeaseName           string
 	LeaseNamespace      string
 	K8sClient           kubernetes.Interface
+	InformerResync      time.Duration
 }
 
 func (cfg *Config) Validate() error {

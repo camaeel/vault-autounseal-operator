@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"flag"
+	"time"
 
 	"github.com/camaeel/vault-autounseal-operator/pkg/config"
 	"github.com/camaeel/vault-autounseal-operator/pkg/utils/logger"
@@ -27,6 +28,7 @@ func main() {
 
 	flag.StringVar(&cfg.LeaseName, "leader-election-lease-name", "vault-autounseal-leader", "Name of the lease object for leader election")
 	flag.StringVar(&cfg.LeaseNamespace, "leader-election-lease-namespace", "", "Name of the namespace with lease object for leader election. If empty use the same namespace as the application is running in")
+	flag.DurationVar(&cfg.InformerResync, "resync-period", 60*time.Second, "Reconcilation loop frequency")
 
 	flag.Parse()
 	err := cfg.Validate()
