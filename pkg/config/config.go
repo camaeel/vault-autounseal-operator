@@ -19,6 +19,7 @@ type Config struct {
 	LeaseNamespace      string
 	K8sClient           kubernetes.Interface
 	InformerResync      time.Duration
+	CaCertPath          string
 }
 
 func (cfg *Config) Validate() error {
