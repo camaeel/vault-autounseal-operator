@@ -1,9 +1,35 @@
 apiVersion: cert-manager.io/v1
-kind: ClusterIssuer
+kind: Issuer
 metadata:
   name: selfsigned
+  namespace: cert-manager
 spec:
   selfSigned: {}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: selfsigned-ca
+  namespace: cert-manager
+spec:
+  isCA: true
+  commonName: selfsigned-ca
+  secretName: selfsigned-ca-root-secret
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  issuerRef:
+    name: selfsigned
+    kind: Issuer
+    group: cert-manager.io
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: selfsigned-ca
+spec:
+  ca:
+    secretName: selfsigned-ca-root-secret
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate
@@ -17,7 +43,7 @@ spec:
   duration: 2160h0m0s
   issuerRef:
     kind: ClusterIssuer
-    name: selfsigned
+    name: selfsigned-ca
   renewBefore: 360h0m0s
   secretName: kong-gateway-proxy-cert
 ---
@@ -35,7 +61,7 @@ spec:
     algorithm: ECDSA
     size: 256
   issuerRef:
-    name: selfsigned
+    name: selfsigned-ca
     kind: ClusterIssuer
     group: cert-manager.io
   usages:
@@ -50,3 +76,50 @@ spec:
     - "*.vault-internal.vault"
     - "*.vault-internal.vault.svc"
     - "*.vault-internal.vault.svc.cluster.local"
+---
+# apiVersion: trust.cert-manager.io/v1alpha1
+# kind: Bundle
+# metadata:
+#   name: vault-server-bundle
+#   namespace: vault
+#   # The bundle name will also be used for the target
+# spec:
+#   sources:
+#   # A Secret in the "trust" namespace; see "Trust Namespace" below for further details
+#   - secret:
+#       name: vault-tls
+#       key: "tls.crt"
+#   - secret:
+#       name: vault-tls
+#       key: "ca.crt"
+#   target:
+#     configMap:      
+#       key: "bundle.pem"
+#     namespaceSelector:
+#       matchLabels:
+#         kubernetes.io/metadata.name: vault
+# ---
+# kind: RoleBinding
+# apiVersion: rbac.authorization.k8s.io/v1
+# metadata:
+#   name: trust-manager-access
+#   namespace: vault
+# roleRef:
+#   apiGroup: rbac.authorization.k8s.io
+#   kind: Role
+#   name: trust-manager
+# subjects:
+# - kind: ServiceAccount
+#   name: trust-manager
+#   namespace: cert-manager
+# ---
+# apiVersion: rbac.authorization.k8s.io/v1
+# kind: Role
+# metadata:
+#   name: trust-manager
+#   namespace: vault
+# rules:
+# - apiGroups: [""]
+#   resources: ["secrets"]
+#   verbs: ["get", "list"]
+#   resourceNames: ["vault-tls"]

@@ -28,7 +28,31 @@ server:
           drop:
             - ALL
   resources: {}
+  extraInitContainers:
+    - name: build-bundle
+      image: alpine:latest
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        runAsNonRoot: true
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+            - ALL
+      command: ["/bin/sh", "-c"]
+      args:
+        - |
+          cat certs/vault-server-tls/tls.crt > /certs/vault-tls-bundle/bundle.crt
+          cat certs/vault-server-tls/ca.crt >> /certs/vault-tls-bundle/bundle.crt
+      volumeMounts:
+      - mountPath: /certs/vault-server-tls
+        name: vault-tls
+        readOnly: true
+      - name: vault-tls-bundle
+        mountPath: /certs/vault-tls-bundle
   volumes:
+    - name: vault-tls-bundle
+      emptyDir: {}
     - name: vault-tls
       secret:
         secretName: vault-tls
@@ -44,7 +68,8 @@ server:
     - mountPath: /vault/userconfig/vault-server-tls
       name: vault-tls
       readOnly: true
-
+    - name: vault-tls-bundle
+      mountPath:  /vault/userconfig/vault-tls-bundle
   service:
     active:
       annotations:
@@ -101,9 +126,9 @@ server:
           tls_disable = 0
           address = "[::]:8200"
           cluster_address = "[::]:8201"
-          tls_cert_file = "/vault/userconfig/vault-server-tls/tls.crt"
+          tls_cert_file = "/vault/userconfig/vault-tls-bundle/bundle.crt"
           tls_key_file  = "/vault/userconfig/vault-server-tls/tls.key"
-          tls_client_ca_file = "/vault/userconfig/vault-server-tls/ca.crt"
+          #tls_client_ca_file = "/vault/userconfig/vault-server-tls/ca.crt"
         
           # Enable unauthenticated metrics access (necessary for Prometheus Operator)
           # telemetry { #TODO

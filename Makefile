@@ -58,3 +58,4 @@ kind_install:
 		vault hashicorp/vault \
 		--values manifests/vault-values.yml \
 		--wait
+	
