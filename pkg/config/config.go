@@ -9,22 +9,36 @@ import (
 )
 
 type Config struct {
-	LogFormat           string
+	LogFormat string
+
+	LeaseName      string
+	LeaseNamespace string
+
 	Namespace           string
 	PodSelectorMap      map[string]string
 	StsSelectorMap      map[string]string
 	PodSelector         string
 	StatefulsetSelector string
-	LeaseName           string
-	LeaseNamespace      string
-	K8sClient           kubernetes.Interface
-	InformerResync      time.Duration
-	CaCertPath          string
+
+	K8sClient             kubernetes.Interface
+	InformerResync        time.Duration
+	CaCertPath            string
+	TlsSkipVerify         bool
+	UnlockShares          int
+	UnlockThreshold       int
+	ServiceDomain         string
+	ServicePort           int
+	ServiceScheme         string
+	VaultRootTokenSecret  string
+	VaultUnlockKeysSecret string
 }
 
 func (cfg *Config) Validate() error {
 	if cfg.LogFormat != "text" && cfg.LogFormat != "json" {
 		return fmt.Errorf("wrong log format %s. Allowed values are: json, text", cfg.LogFormat)
+	}
+	if cfg.ServiceScheme != "http" && cfg.ServiceScheme != "https" {
+		return fmt.Errorf("wrong service scheme %s. Allowed values are: http, https", cfg.ServiceScheme)
 	}
 
 	return nil
