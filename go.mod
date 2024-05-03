@@ -5,7 +5,6 @@ go 1.22
 require (
 	github.com/google/uuid v1.3.1
 	github.com/stretchr/testify v1.9.0
-	google.golang.org/appengine v1.6.8
 	k8s.io/apimachinery v0.29.3
 	k8s.io/client-go v0.29.3
 )
@@ -39,6 +38,7 @@ require (
 	golang.org/x/term v0.15.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	golang.org/x/time v0.3.0 // indirect
+	google.golang.org/appengine v1.6.8 // indirect
 	google.golang.org/protobuf v1.33.0 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect

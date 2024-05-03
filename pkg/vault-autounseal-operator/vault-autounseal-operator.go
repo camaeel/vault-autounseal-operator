@@ -9,7 +9,7 @@ import (
 	"syscall"
 
 	"github.com/camaeel/vault-autounseal-operator/pkg/config"
-	"github.com/camaeel/vault-autounseal-operator/pkg/kubeclient"
+	"github.com/camaeel/vault-autounseal-operator/pkg/providers/kubeclient"
 	"github.com/camaeel/vault-autounseal-operator/pkg/utils/logger"
 	podhandler "github.com/camaeel/vault-autounseal-operator/pkg/vault-autounseal-operator/pod_handler"
 	"k8s.io/client-go/informers"
@@ -35,6 +35,8 @@ func Exec(ctx context.Context, cfg *config.Config) error {
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 	cancelOnSigterm(cancel)
+
+	//TODO: implmenet filewatcher that will watch changes of ca.crt provided to the app
 
 	kubeclient.LeaderElection(
 		ctx,
