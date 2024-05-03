@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/camaeel/vault-autounseal-operator/pkg/config"
-	"github.com/camaeel/vault-autounseal-operator/pkg/utils/logger"
+	"github.com/camaeel/vault-autounseal-operator/pkg/utils/logging"
 	vaultUnsealOperator "github.com/camaeel/vault-autounseal-operator/pkg/vault-autounseal-operator"
 )
 
@@ -42,6 +42,10 @@ func main() {
 
 	ctx := context.TODO()
 
-	logger.SetupLogging(cfg)
+	err = logging.SetupLogging(cfg)
+	if err != nil {
+		panic(err)
+	}
+
 	vaultUnsealOperator.Exec(ctx, cfg)
 }
