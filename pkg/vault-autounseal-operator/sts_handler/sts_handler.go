@@ -2,10 +2,10 @@ package stsHandler
 
 import "k8s.io/client-go/tools/cache"
 
-func GetPodHandlerFunctions() cache.ResourceEventHandlerFuncs {
+func GetStsHandlerFunctions() cache.ResourceEventHandlerFuncs {
 	ret := cache.ResourceEventHandlerFuncs{
 		AddFunc: stsHandler,
-		UpdateFunc: func(oldObj, newObj interface{}) {
+		UpdateFunc: func(_, newObj interface{}) {
 			stsHandler(newObj)
 		},
 		DeleteFunc: nil,

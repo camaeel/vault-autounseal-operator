@@ -63,7 +63,7 @@ func Exec(ctx context.Context, cfg *config.Config) error {
 				slog.Error("Failed to add event handler: %v", err)
 				cancel()
 			}
-			_, err = stsInformer.AddEventHandler(stsHandler.GetPodHandlerFunctions())
+			_, err = stsInformer.AddEventHandler(stsHandler.GetStsHandlerFunctions())
 			if err != nil {
 				slog.Error("Failed to add event handler: %v", err)
 				cancel()
