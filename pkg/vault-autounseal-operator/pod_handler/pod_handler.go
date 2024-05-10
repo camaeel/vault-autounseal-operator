@@ -1,6 +1,9 @@
 package podhandler
 
-import "k8s.io/client-go/tools/cache"
+import (
+	corev1 "k8s.io/api/core/v1"
+	"k8s.io/client-go/tools/cache"
+)
 
 func GetPodHandlerFunctions() cache.ResourceEventHandlerFuncs {
 	ret := cache.ResourceEventHandlerFuncs{
@@ -23,4 +26,16 @@ func podHandler(obj interface{}) {
 	// check if cluster is sealed
 	//// unseal
 
+}
+
+func isInitialized(pod corev1.Pod) bool {
+	return pod.Annotations["vault-initialized"] == "true"
+}
+
+func isSealed(pod corev1.Pod) bool {
+	return pod.Annotations["vault-sealed"] == "true"
+}
+
+func isLeader(pod corev1.Pod) bool {
+	return pod.Annotations["vault-active"] == "true"
 }

@@ -15,8 +15,6 @@ type Config struct {
 	LeaseNamespace string
 
 	Namespace           string
-	PodSelectorMap      map[string]string
-	StsSelectorMap      map[string]string
 	PodSelector         string
 	StatefulsetSelector string
 
@@ -41,17 +39,6 @@ func (cfg *Config) Validate() error {
 		return fmt.Errorf("wrong service scheme %s. Allowed values are: http, https", cfg.ServiceScheme)
 	}
 
-	podSelectorMap, err := parseMap(cfg.PodSelector)
-	if err != nil {
-		return fmt.Errorf("wrong pod selector format %s, due to %v", cfg.PodSelector, err)
-	}
-	cfg.PodSelectorMap = podSelectorMap
-
-	cfg.StsSelectorMap, err = parseMap(cfg.StatefulsetSelector)
-	if err != nil {
-		return fmt.Errorf("wrong statefulset selector format %s, due to %v", cfg.StatefulsetSelector, err)
-
-	}
 	return nil
 }
 

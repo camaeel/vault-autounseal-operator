@@ -12,6 +12,7 @@ import (
 	"github.com/camaeel/vault-autounseal-operator/pkg/providers/kubeclient"
 	podhandler "github.com/camaeel/vault-autounseal-operator/pkg/vault-autounseal-operator/pod_handler"
 	stsHandler "github.com/camaeel/vault-autounseal-operator/pkg/vault-autounseal-operator/sts_handler"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/informers"
 	"k8s.io/client-go/tools/cache"
 )
@@ -42,14 +43,32 @@ func Exec(ctx context.Context, cfg *config.Config) error {
 		ctx,
 		cfg,
 		func(ctx3 context.Context) {
-			factory := informers.NewSharedInformerFactoryWithOptions(cfg.K8sClient, cfg.InformerResync)
-			podInformerFactory := factory.Core().V1().Pods()
-			stsInformerFactory := factory.Apps().V1().StatefulSets()
+			// pod ifnroremr
+			podTweakListOptionsFunc := func(opts *v1.ListOptions) {
+				opts.LabelSelector = cfg.PodSelector
+			}
+			stsTweakListOptionsFunc := func(opts *v1.ListOptions) {
+				opts.LabelSelector = cfg.StatefulsetSelector
+
+			}
+			podFactory := informers.NewSharedInformerFactoryWithOptions(cfg.K8sClient, cfg.InformerResync,
+				informers.WithNamespace(cfg.Namespace),
+				informers.WithTweakListOptions(podTweakListOptionsFunc),
+			)
+			stsFactory := informers.NewSharedInformerFactoryWithOptions(cfg.K8sClient, cfg.InformerResync,
+				informers.WithNamespace(cfg.Namespace),
+				informers.WithTweakListOptions(stsTweakListOptionsFunc),
+			)
+			podInformerFactory := podFactory.Core().V1().Pods()
+			stsInformerFactory := stsFactory.Apps().V1().StatefulSets()
 			podInformer := podInformerFactory.Informer()
 			stsInformer := stsInformerFactory.Informer()
 			// podLister := podInformer.Lister()
-			factory.Start(ctx.Done())
-			factory.WaitForCacheSync(ctx.Done())
+			podFactory.Start(ctx.Done())
+			podFactory.WaitForCacheSync(ctx.Done())
+			stsFactory.Start(ctx.Done())
+			stsFactory.WaitForCacheSync(ctx.Done())
+
 			if !cache.WaitForCacheSync(ctx.Done(), podInformer.HasSynced) {
 				slog.Error("Timed out waiting for caches to sync")
 				cancel()
