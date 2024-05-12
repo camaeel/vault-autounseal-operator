@@ -7,6 +7,7 @@ import (
 	"github.com/camaeel/vault-autounseal-operator/pkg/config"
 	corev1 "k8s.io/api/core/v1"
 	v1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/errors"
 	listerv1 "k8s.io/client-go/listers/core/v1"
 	"k8s.io/client-go/tools/cache"
 )
@@ -40,28 +41,31 @@ func podHandler(cfg *config.Config, secretLister listerv1.SecretLister, obj inte
 
 	initSecret, err := getInitializedSecret(cfg, secretLister)
 	if err != nil {
-		slog.Warn("can't get vault initialization secret: %v", err)
-		return
+		if !errors.IsNotFound(err) {
+			slog.Error("can't get vault initialization secret: %v", err)
+			return
+		}
+		initSecret = nil
 	}
 
-	if isInitialized(obj.(corev1.Pod)) && initSecret != nil {
-		mutex.Lock()
-		defer mutex.Unlock()
+	if !isInitialized(obj.(corev1.Pod)) {
+		if initSecret != nil {
+			mutex.Lock()
+			defer mutex.Unlock()
 
-		initData, err := initialize(
-			obj.(corev1.Pod),
-		)
-		if err != nil {
-			slog.Error("can't initialize vault: %v", err)
+			initData, err := initialize(
+				obj.(corev1.Pod),
+			)
+			if err != nil {
+				slog.Error("can't initialize vault: %v", err)
+			}
+
+			err = createInitSecret(cfg, initData)
+			if err != nil {
+				slog.Error("can't create vault initialization secret: %v", err)
+			}
+			//create or replace root token secret
 		}
-
-		err = createInitSecrets(cfg, initData)
-		if err != nil {
-			slog.Error("can't create vault initialization secret: %v", err)
-		}
-		//create initialization secret
-		//create or replace root token secret
-
 		return //this should trigger another call to this method wit initialzied=true
 	}
 
@@ -117,6 +121,6 @@ func getInitializedSecret(cfg *config.Config, secretLister listerv1.SecretLister
 	return ret, err
 }
 
-func createInitSecrets(cfg *config.Config, initData []InitData) error {
+func createInitSecret(cfg *config.Config, initData []InitData) error {
 	return nil
 }

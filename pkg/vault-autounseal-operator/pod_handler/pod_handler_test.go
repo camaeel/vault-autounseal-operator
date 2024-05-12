@@ -3,10 +3,19 @@ package podhandler
 import (
 	"testing"
 
+	"github.com/camaeel/vault-autounseal-operator/pkg/config"
 	"github.com/stretchr/testify/assert"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
+
+func TestGetPodHandlerFunctions(t *testing.T) {
+	cfg := config.Config{
+		Namespace: "vault",
+	}
+	ret := GetPodHandlerFunctions(&cfg, nil)
+	assert.NotNil(t, ret)
+}
 
 func TestIsInitialized_True(t *testing.T) {
 	pod := corev1.Pod{
