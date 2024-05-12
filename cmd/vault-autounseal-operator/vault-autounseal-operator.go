@@ -32,7 +32,9 @@ func main() {
 	flag.StringVar(&cfg.LeaseName, "leader-election-lease-name", "vault-autounseal-leader", "Name of the lease object for leader election")
 	flag.StringVar(&cfg.LeaseNamespace, "leader-election-lease-namespace", "", "Name of the namespace with lease object for leader election. If empty use the same namespace as the application is running in")
 	flag.DurationVar(&cfg.InformerResync, "resync-period", 60*time.Second, "Reconcilation loop frequency")
+
 	flag.StringVar(&cfg.LogFormat, "log-format", "json", "Log format. Allowed values are: text, json. Default is json. ")
+	flag.StringVar(&cfg.LogLevel, "log-level", "info", "Log level. Allowed values are: debug, info, warn, error. Default is info.")
 
 	flag.Parse()
 	err := cfg.Validate()

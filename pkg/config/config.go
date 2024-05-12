@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"log/slog"
 	"strings"
 	"time"
 
@@ -10,6 +11,7 @@ import (
 
 type Config struct {
 	LogFormat string
+	LogLevel  string
 
 	LeaseName      string
 	LeaseNamespace string
@@ -37,6 +39,12 @@ func (cfg *Config) Validate() error {
 	}
 	if cfg.ServiceScheme != "http" && cfg.ServiceScheme != "https" {
 		return fmt.Errorf("wrong service scheme %s. Allowed values are: http, https", cfg.ServiceScheme)
+	}
+	if cfg.LogLevel != strings.ToLower(slog.LevelDebug.String()) &&
+		cfg.LogLevel != strings.ToLower(slog.LevelInfo.String()) &&
+		cfg.LogLevel != strings.ToLower(slog.LevelWarn.String()) &&
+		cfg.LogLevel != strings.ToLower(slog.LevelError.String()) {
+		return fmt.Errorf("wrong log level %s. Allowed values are: debug, info, warn, error", cfg.LogLevel)
 	}
 
 	return nil

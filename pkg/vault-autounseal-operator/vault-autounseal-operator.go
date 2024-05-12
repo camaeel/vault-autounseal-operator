@@ -11,14 +11,13 @@ import (
 	"github.com/camaeel/vault-autounseal-operator/pkg/config"
 	"github.com/camaeel/vault-autounseal-operator/pkg/providers/kubeclient"
 	podhandler "github.com/camaeel/vault-autounseal-operator/pkg/vault-autounseal-operator/pod_handler"
-	stsHandler "github.com/camaeel/vault-autounseal-operator/pkg/vault-autounseal-operator/sts_handler"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/informers"
 	"k8s.io/client-go/tools/cache"
 )
 
 func Exec(ctx context.Context, cfg *config.Config) error {
-	slog.Info(fmt.Sprintf("Staring now %s asd", "asd"))
+	slog.Info(fmt.Sprintf("Staring now %s", "vault-autounseal-operator"))
 
 	clientset, currentNamespace, err := kubeclient.GetClient()
 	if err != nil {
@@ -59,15 +58,33 @@ func Exec(ctx context.Context, cfg *config.Config) error {
 				informers.WithNamespace(cfg.Namespace),
 				informers.WithTweakListOptions(stsTweakListOptionsFunc),
 			)
+			secretFactory := informers.NewSharedInformerFactoryWithOptions(cfg.K8sClient, cfg.InformerResync,
+				informers.WithNamespace(cfg.Namespace),
+				// informers.WithTweakListOptions(podTweakListOptionsFunc),
+			)
+
 			podInformerFactory := podFactory.Core().V1().Pods()
 			stsInformerFactory := stsFactory.Apps().V1().StatefulSets()
+			secretInformerFactory := secretFactory.Core().V1().Secrets()
+
 			podInformer := podInformerFactory.Informer()
 			stsInformer := stsInformerFactory.Informer()
-			// podLister := podInformer.Lister()
+			secretInformer := secretInformerFactory.Informer()
+
+			secretLister := secretInformerFactory.Lister()
+
 			podFactory.Start(ctx.Done())
 			podFactory.WaitForCacheSync(ctx.Done())
 			stsFactory.Start(ctx.Done())
 			stsFactory.WaitForCacheSync(ctx.Done())
+			secretFactory.Start(ctx.Done())
+			secretFactory.WaitForCacheSync(ctx.Done())
+
+			_, err := podInformer.AddEventHandler(podhandler.GetPodHandlerFunctions(cfg, secretLister))
+			if err != nil {
+				slog.Error("Failed to add event handler: %v", err)
+				cancel()
+			}
 
 			if !cache.WaitForCacheSync(ctx.Done(), podInformer.HasSynced) {
 				slog.Error("Timed out waiting for caches to sync")
@@ -77,16 +94,16 @@ func Exec(ctx context.Context, cfg *config.Config) error {
 				slog.Error("Timed out waiting for caches to sync")
 				cancel()
 			}
-			_, err := podInformer.AddEventHandler(podhandler.GetPodHandlerFunctions())
-			if err != nil {
-				slog.Error("Failed to add event handler: %v", err)
+			if !cache.WaitForCacheSync(ctx.Done(), secretInformer.HasSynced) {
+				slog.Error("Timed out waiting for caches to sync")
 				cancel()
 			}
-			_, err = stsInformer.AddEventHandler(stsHandler.GetStsHandlerFunctions())
-			if err != nil {
-				slog.Error("Failed to add event handler: %v", err)
-				cancel()
-			}
+
+			// _, err = stsInformer.AddEventHandler(stsHandler.GetStsHandlerFunctions())
+			// if err != nil {
+			// 	slog.Error("Failed to add event handler: %v", err)
+			// 	cancel()
+			// }
 		},
 		cancel)
 

@@ -1,6 +1,7 @@
 package logging
 
 import (
+	"log/slog"
 	"testing"
 
 	"github.com/camaeel/vault-autounseal-operator/pkg/config"
@@ -43,8 +44,59 @@ func TestSetupLogging(t *testing.T) {
 			},
 			wantErr: true,
 		},
+		{
+			name: "invalid log level",
+			args: args{
+				cfg: &config.Config{
+					LogFormat: "json",
+					LogLevel:  "invalid",
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "debug log level",
+			args: args{
+				cfg: &config.Config{
+					LogFormat: "json",
+					LogLevel:  "debug",
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "debug log level",
+			args: args{
+				cfg: &config.Config{
+					LogFormat: "json",
+					LogLevel:  "info",
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "debug log level",
+			args: args{
+				cfg: &config.Config{
+					LogFormat: "json",
+					LogLevel:  "warn",
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "debug log level",
+			args: args{
+				cfg: &config.Config{
+					LogFormat: "json",
+					LogLevel:  "error",
+				},
+			},
+			wantErr: false,
+		},
 	}
 	for _, tt := range tests {
+		originalLogger := slog.Default()
 		t.Run(tt.name, func(t *testing.T) {
 
 			err := SetupLogging(tt.args.cfg)
@@ -55,5 +107,7 @@ func TestSetupLogging(t *testing.T) {
 				assert.NoError(t, err)
 			}
 		})
+		slog.SetDefault(originalLogger)
 	}
+
 }

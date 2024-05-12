@@ -15,6 +15,7 @@ func GetStsHandlerFunctions() cache.ResourceEventHandlerFuncs {
 }
 
 func stsHandler(obj interface{}) {
+	//maybe this should be part of pod handler.
 	// check if sts is different than pods - can this be done through API
 	// initiate somehow patching of nodes -> this should go to podHandler (annotation on a existing pod that it needs drain?)
 
