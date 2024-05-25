@@ -37,7 +37,11 @@ func main() {
 	flag.StringVar(&cfg.LogLevel, "log-level", "info", "Log level. Allowed values are: debug, info, warn, error. Default is info.")
 
 	flag.Parse()
-	err := cfg.Validate()
+	err := cfg.Initialize()
+	if err != nil {
+		panic(err)
+	}
+	err = cfg.Validate()
 	if err != nil {
 		panic(err)
 	}

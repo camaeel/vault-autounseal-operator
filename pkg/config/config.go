@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"log/slog"
+	"os"
 	"strings"
 	"time"
 
@@ -23,6 +24,7 @@ type Config struct {
 	K8sClient             kubernetes.Interface
 	InformerResync        time.Duration
 	CaCertPath            string
+	CaCert                string
 	TlsSkipVerify         bool
 	UnlockShares          int
 	UnlockThreshold       int
@@ -31,6 +33,15 @@ type Config struct {
 	ServiceScheme         string
 	VaultRootTokenSecret  string
 	VaultUnlockKeysSecret string
+}
+
+func (cfg *Config) Initialize() error {
+	cacert, err := os.ReadFile(cfg.CaCert)
+	if err != nil {
+		return err
+	}
+	cfg.CaCert = string(cacert)
+	return nil
 }
 
 func (cfg *Config) Validate() error {
