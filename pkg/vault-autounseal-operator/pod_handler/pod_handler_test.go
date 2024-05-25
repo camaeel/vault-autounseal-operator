@@ -1,6 +1,7 @@
 package podhandler
 
 import (
+	"context"
 	"testing"
 
 	"github.com/camaeel/vault-autounseal-operator/pkg/config"
@@ -13,7 +14,7 @@ func TestGetPodHandlerFunctions(t *testing.T) {
 	cfg := config.Config{
 		Namespace: "vault",
 	}
-	ret := GetPodHandlerFunctions(&cfg, nil)
+	ret := GetPodHandlerFunctions(&cfg, context.TODO(), nil)
 	assert.NotNil(t, ret)
 }
 
@@ -162,4 +163,8 @@ func TestIsLeader_InvalidAnnotationValue(t *testing.T) {
 
 	res := isLeader(pod)
 	assert.False(t, res)
+}
+
+func TestInitialize(t *testing.T) {
+
 }

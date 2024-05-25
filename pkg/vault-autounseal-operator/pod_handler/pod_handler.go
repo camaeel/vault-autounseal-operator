@@ -1,31 +1,29 @@
 package podhandler
 
 import (
+	"context"
 	"log/slog"
 	"sync"
 
 	"github.com/camaeel/vault-autounseal-operator/pkg/config"
+	vaultProvider "github.com/camaeel/vault-autounseal-operator/pkg/providers/vault"
+	operatorSecrets "github.com/camaeel/vault-autounseal-operator/pkg/vault-autounseal-operator/secrets"
+	vault "github.com/hashicorp/vault/api"
 	corev1 "k8s.io/api/core/v1"
-	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
 	listerv1 "k8s.io/client-go/listers/core/v1"
 	"k8s.io/client-go/tools/cache"
 )
 
-var mutex *sync.RWMutex = &sync.RWMutex{}
+var mutex = &sync.RWMutex{}
 
-type InitData struct {
-	RootToken  string
-	UnsealKeys []string
-}
-
-func GetPodHandlerFunctions(cfg *config.Config, secretLister listerv1.SecretLister) cache.ResourceEventHandlerFuncs {
+func GetPodHandlerFunctions(cfg *config.Config, ctx context.Context, secretLister listerv1.SecretLister) cache.ResourceEventHandlerFuncs {
 	ret := cache.ResourceEventHandlerFuncs{
 		AddFunc: func(newObj interface{}) {
-			podHandler(cfg, secretLister, newObj)
+			podHandler(cfg, ctx, secretLister, newObj)
 		},
 		UpdateFunc: func(oldObj, newObj interface{}) {
-			podHandler(cfg, secretLister, newObj)
+			podHandler(cfg, ctx, secretLister, newObj)
 		},
 		DeleteFunc: nil,
 	}
@@ -33,13 +31,13 @@ func GetPodHandlerFunctions(cfg *config.Config, secretLister listerv1.SecretList
 
 }
 
-func podHandler(cfg *config.Config, secretLister listerv1.SecretLister, obj interface{}) {
+func podHandler(cfg *config.Config, ctx context.Context, secretLister listerv1.SecretLister, obj interface{}) {
 	mutex.RLock()
 	defer mutex.RUnlock()
 
 	slog.Debug("Starting pod handler", "pod", obj.(*corev1.Pod).Name)
 
-	initSecret, err := getInitializedSecret(cfg, secretLister)
+	initSecret, err := operatorSecrets.GetUnlockSecret(cfg, secretLister)
 	if err != nil {
 		if !errors.IsNotFound(err) {
 			slog.Error("can't get vault initialization secret: %v", err)
@@ -53,20 +51,24 @@ func podHandler(cfg *config.Config, secretLister listerv1.SecretLister, obj inte
 			mutex.Lock()
 			defer mutex.Unlock()
 
-			initData, err := initialize(
-				obj.(corev1.Pod),
-			)
+			initData, err := initialize(cfg, ctx, obj.(corev1.Pod))
 			if err != nil {
 				slog.Error("can't initialize vault: %v", err)
+				return
 			}
 
-			err = createInitSecret(cfg, initData)
+			err = operatorSecrets.CreateUnlockSecret(cfg, ctx, initData)
 			if err != nil {
 				slog.Error("can't create vault initialization secret: %v", err)
+				return
 			}
-			//create or replace root token secret
+			//how to handle if this fails. Then cluster is initialized but operator doesn't have initialization data. Cluster needs to be cleaned and initialized from scratch - might be detected and at least suggested in the logs.
+			err = operatorSecrets.CreateOrReplaceRootTokenSecret(cfg, ctx, initData)
+			if err != nil {
+				slog.Error("can't create root token secret: %v", err)
+			}
 		}
-		return //this should trigger another call to this method wit initialzied=true
+		return //this should trigger another call to this method wit initialized=true
 	}
 
 	if isSealed(obj.(corev1.Pod)) {
@@ -101,8 +103,17 @@ func isLeader(pod corev1.Pod) bool {
 	return pod.Annotations["vault-active"] == "true"
 }
 
-func initialize(pod corev1.Pod) ([]InitData, error) {
-	return nil, nil
+func initialize(cfg *config.Config, ctx context.Context, pod corev1.Pod) (*vault.InitResponse, error) {
+	req := vault.InitRequest{
+		SecretShares:    cfg.UnlockShares,
+		SecretThreshold: cfg.UnlockThreshold,
+	}
+	vaultClient := vaultProvider.GetVaultClient(pod)
+	resp, err := vaultClient.Sys().InitWithContext(ctx, &req)
+	if err != nil {
+		slog.Error("Can't initialize vault")
+	}
+	return resp, err
 }
 
 func unseal(pod corev1.Pod) error {
@@ -110,17 +121,5 @@ func unseal(pod corev1.Pod) error {
 }
 
 func drain(pod corev1.Pod) error {
-	return nil
-}
-
-func getInitializedSecret(cfg *config.Config, secretLister listerv1.SecretLister) (*v1.Secret, error) {
-	ret, err := secretLister.Secrets(cfg.Namespace).Get(cfg.VaultUnlockKeysSecret)
-	if err != nil {
-		return nil, err
-	}
-	return ret, err
-}
-
-func createInitSecret(cfg *config.Config, initData []InitData) error {
 	return nil
 }

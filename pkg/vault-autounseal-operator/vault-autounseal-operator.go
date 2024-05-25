@@ -80,7 +80,7 @@ func Exec(ctx context.Context, cfg *config.Config) error {
 			secretFactory.Start(ctx.Done())
 			secretFactory.WaitForCacheSync(ctx.Done())
 
-			_, err := podInformer.AddEventHandler(podhandler.GetPodHandlerFunctions(cfg, secretLister))
+			_, err := podInformer.AddEventHandler(podhandler.GetPodHandlerFunctions(cfg, ctx, secretLister))
 			if err != nil {
 				slog.Error("Failed to add event handler: %v", err)
 				cancel()
