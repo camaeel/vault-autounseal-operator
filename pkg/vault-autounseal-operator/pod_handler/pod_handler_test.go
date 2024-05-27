@@ -2,12 +2,13 @@ package podhandler
 
 import (
 	"context"
-	"testing"
-
 	"github.com/camaeel/vault-autounseal-operator/pkg/config"
+	vaulthttp "github.com/hashicorp/vault/http"
+	"github.com/hashicorp/vault/vault"
 	"github.com/stretchr/testify/assert"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"testing"
 )
 
 func TestGetPodHandlerFunctions(t *testing.T) {
@@ -166,5 +167,65 @@ func TestIsLeader_InvalidAnnotationValue(t *testing.T) {
 }
 
 func TestInitialize(t *testing.T) {
+	ctx := context.TODO()
+	cfg := config.Config{
+		UnlockShares:    3,
+		UnlockThreshold: 3,
+	}
+	// mock Vault server
+	coreConfig := vault.CoreConfig{}
+	opts := vault.TestClusterOptions{
+		SkipInit:    true,
+		NumCores:    3,
+		HandlerFunc: vaulthttp.Handler,
+	}
+	testVault := vault.NewTestCluster(t, &coreConfig, &opts)
+	vaultClient := testVault.Cores[0].Client
 
+	initData, err := initialize(&cfg, ctx, vaultClient)
+	assert.NoError(t, err)
+	assert.NotNil(t, initData)
+	assert.Len(t, initData.Keys, 3)
+
+	sealStatus, err := vaultClient.Sys().SealStatus()
+	assert.NoError(t, err)
+	assert.NotNil(t, sealStatus)
+	assert.True(t, sealStatus.Initialized)
+	assert.True(t, sealStatus.Sealed)
+}
+
+func TestUnseal(t *testing.T) {
+	ctx := context.TODO()
+	// mock Vault server
+	coreConfig := vault.CoreConfig{}
+	opts := vault.TestClusterOptions{
+		SkipInit:    true,
+		NumCores:    3,
+		HandlerFunc: vaulthttp.Handler,
+	}
+	testVault := vault.NewTestCluster(t, &coreConfig, &opts)
+	vaultClient := testVault.Cores[0].Client
+
+	cfg := config.Config{
+		UnlockShares:    3,
+		UnlockThreshold: 3,
+	}
+
+	//need to initialize first
+	initData, err := initialize(&cfg, ctx, vaultClient)
+
+	sealStatusBefore, err := vaultClient.Sys().SealStatus()
+	assert.NoError(t, err)
+	assert.NotNil(t, sealStatusBefore)
+	assert.True(t, sealStatusBefore.Initialized)
+	assert.True(t, sealStatusBefore.Sealed)
+
+	err = unseal(ctx, vaultClient, initData.Keys)
+	assert.NoError(t, err)
+
+	sealStatus, err := vaultClient.Sys().SealStatus()
+	assert.NoError(t, err)
+	assert.NotNil(t, sealStatus)
+	assert.True(t, sealStatus.Initialized)
+	assert.False(t, sealStatus.Sealed)
 }

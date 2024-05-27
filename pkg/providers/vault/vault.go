@@ -3,15 +3,15 @@ package vault
 import (
 	"fmt"
 	"github.com/camaeel/vault-autounseal-operator/pkg/config"
-	vault "github.com/hashicorp/vault/api"
+	vaultapi "github.com/hashicorp/vault/api"
 	corev1 "k8s.io/api/core/v1"
 )
 
-func GetVaultClient(cfg *config.Config, pod *corev1.Pod) (*vault.Client, error) {
-	defaultCfg := vault.DefaultConfig() // modify for more granular configuration
+func GetVaultClient(cfg *config.Config, pod corev1.Pod) (*vaultapi.Client, error) {
+	defaultCfg := vaultapi.DefaultConfig() // modify for more granular configuration
 	defaultCfg.Address = fmt.Sprintf("%s://%s.%s:%d", "https", pod.Name, cfg.ServiceDomain, cfg.ServicePort)
 
-	tlsConfig := vault.TLSConfig{
+	tlsConfig := vaultapi.TLSConfig{
 		CACert: cfg.CaCert,
 	}
 	err := defaultCfg.ConfigureTLS(&tlsConfig)
@@ -19,7 +19,7 @@ func GetVaultClient(cfg *config.Config, pod *corev1.Pod) (*vault.Client, error) 
 		return nil, err
 	}
 
-	client, err := vault.NewClient(defaultCfg)
+	client, err := vaultapi.NewClient(defaultCfg)
 	if err != nil {
 		return nil, fmt.Errorf("unable to initialize vault client: %w", err)
 	}

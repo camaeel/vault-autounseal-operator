@@ -2,11 +2,12 @@ package podhandler
 
 import (
 	"context"
+	"fmt"
+	vaultProvider "github.com/camaeel/vault-autounseal-operator/pkg/providers/vault"
 	"log/slog"
 	"sync"
 
 	"github.com/camaeel/vault-autounseal-operator/pkg/config"
-	vaultProvider "github.com/camaeel/vault-autounseal-operator/pkg/providers/vault"
 	operatorSecrets "github.com/camaeel/vault-autounseal-operator/pkg/vault-autounseal-operator/secrets"
 	vault "github.com/hashicorp/vault/api"
 	corev1 "k8s.io/api/core/v1"
@@ -37,6 +38,12 @@ func podHandler(cfg *config.Config, ctx context.Context, secretLister listerv1.S
 
 	slog.Debug("Starting pod handler", "pod", obj.(*corev1.Pod).Name)
 
+	vaultClient, err := vaultProvider.GetVaultClient(cfg, obj.(corev1.Pod))
+	if err != nil {
+		slog.Error(fmt.Sprintf("Can't get vault client for pod, due to: %v", err))
+		return
+	}
+
 	initSecret, err := operatorSecrets.GetUnlockSecret(cfg, secretLister)
 	if err != nil {
 		if !errors.IsNotFound(err) {
@@ -51,7 +58,7 @@ func podHandler(cfg *config.Config, ctx context.Context, secretLister listerv1.S
 			mutex.Lock()
 			defer mutex.Unlock()
 
-			initData, err := initialize(cfg, ctx, obj.(corev1.Pod))
+			initData, err := initialize(cfg, ctx, vaultClient)
 			if err != nil {
 				slog.Error("can't initialize vault: %v", err)
 				return
@@ -72,9 +79,7 @@ func podHandler(cfg *config.Config, ctx context.Context, secretLister listerv1.S
 	}
 
 	if isSealed(obj.(corev1.Pod)) {
-		err := unseal(
-			obj.(corev1.Pod),
-		)
+		err := unseal(ctx, vaultClient, []string{}) //TODO: here
 		if err != nil {
 			slog.Error("can't unseal vault: %v", err)
 		}
@@ -103,12 +108,12 @@ func isLeader(pod corev1.Pod) bool {
 	return pod.Annotations["vault-active"] == "true"
 }
 
-func initialize(cfg *config.Config, ctx context.Context, pod corev1.Pod) (*vault.InitResponse, error) {
+func initialize(cfg *config.Config, ctx context.Context, vaultClient *vault.Client) (*vault.InitResponse, error) {
 	req := vault.InitRequest{
 		SecretShares:    cfg.UnlockShares,
 		SecretThreshold: cfg.UnlockThreshold,
 	}
-	vaultClient := vaultProvider.GetVaultClient(pod)
+
 	resp, err := vaultClient.Sys().InitWithContext(ctx, &req)
 	if err != nil {
 		slog.Error("Can't initialize vault")
@@ -116,7 +121,14 @@ func initialize(cfg *config.Config, ctx context.Context, pod corev1.Pod) (*vault
 	return resp, err
 }
 
-func unseal(pod corev1.Pod) error {
+func unseal(ctx context.Context, vaultClient *vault.Client, unsealData []string) error {
+	for i := range unsealData {
+		resp, err := vaultClient.Sys().UnsealWithContext(ctx, unsealData[i])
+		if err != nil {
+			return err
+		}
+		slog.Info(fmt.Sprintf("unseal resp: %v", resp))
+	}
 	return nil
 }
 
