@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	vaultProvider "github.com/camaeel/vault-autounseal-operator/pkg/providers/vault"
+	"golang.org/x/exp/maps"
 	"log/slog"
 	"sync"
 
@@ -79,7 +80,11 @@ func podHandler(cfg *config.Config, ctx context.Context, secretLister listerv1.S
 	}
 
 	if isSealed(obj.(corev1.Pod)) {
-		err := unseal(ctx, vaultClient, []string{}) //TODO: here
+		if initSecret == nil {
+			slog.Error("init secret is not initialized, so can't unseal")
+			return
+		}
+		err := unseal(ctx, vaultClient, maps.Values(initSecret.StringData)) //TODO: here
 		if err != nil {
 			slog.Error("can't unseal vault: %v", err)
 		}
@@ -88,11 +93,6 @@ func podHandler(cfg *config.Config, ctx context.Context, secretLister listerv1.S
 
 	// check if certificate served by vault doesn't match one in secret
 	//// drain pod (so the API will keep minimum pods according to PDB)
-	// check if cluster is initialized
-	//// if there is no vault secret
-	////// initialize
-	// check if cluster is sealed
-	//// unseal
 
 }
 
