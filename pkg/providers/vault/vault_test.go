@@ -15,9 +15,9 @@ func TestGetVaultClient(t *testing.T) {
 	assert.NoError(t, err)
 
 	cfg := config.Config{
-		ServiceDomain: "vault-internal.vault.svc.cluster.local",
-		CaCert:        cert,
-		ServicePort:   8200,
+		ServiceDomain:   "vault-internal.vault.svc.cluster.local",
+		VaultCaCertPath: cert,
+		ServicePort:     8200,
 	}
 	pod := corev1.Pod{
 		ObjectMeta: metav1.ObjectMeta{

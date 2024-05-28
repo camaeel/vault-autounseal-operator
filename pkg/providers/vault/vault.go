@@ -12,7 +12,7 @@ func GetVaultClient(cfg *config.Config, pod corev1.Pod) (*vaultapi.Client, error
 	defaultCfg.Address = fmt.Sprintf("%s://%s.%s:%d", "https", pod.Name, cfg.ServiceDomain, cfg.ServicePort)
 
 	tlsConfig := vaultapi.TLSConfig{
-		CACert: cfg.CaCert,
+		CACert: cfg.VaultCaCert,
 	}
 	err := defaultCfg.ConfigureTLS(&tlsConfig)
 	if err != nil {

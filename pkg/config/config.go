@@ -23,8 +23,8 @@ type Config struct {
 
 	K8sClient             kubernetes.Interface
 	InformerResync        time.Duration
-	CaCertPath            string
-	CaCert                string
+	VaultCaCertPath       string
+	VaultCaCert           string
 	TlsSkipVerify         bool
 	UnlockShares          int
 	UnlockThreshold       int
@@ -36,11 +36,13 @@ type Config struct {
 }
 
 func (cfg *Config) Initialize() error {
-	cacert, err := os.ReadFile(cfg.CaCert)
-	if err != nil {
-		return err
+	if cfg.VaultCaCertPath != "" {
+		cacert, err := os.ReadFile(cfg.VaultCaCertPath)
+		if err != nil {
+			return err
+		}
+		cfg.VaultCaCert = string(cacert)
 	}
-	cfg.CaCert = string(cacert)
 	return nil
 }
 

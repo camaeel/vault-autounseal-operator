@@ -20,7 +20,7 @@ func main() {
 	flag.StringVar(&cfg.ServiceDomain, "service-domain", "vault-internal.vault.svc.cluster.local", "DNS Name for accessing vault. In HA mode should be set to vault headles service providing all pod endpoints.")
 	flag.StringVar(&cfg.ServiceScheme, "service-scheme", "https", "Vaul service scheme. Valid values: http, https")
 	flag.IntVar(&cfg.ServicePort, "service-port", 8200, "Vaul service port")
-	flag.StringVar(&cfg.CaCertPath, "ca-cert-path", "", "Path to vault CA certificate")
+	flag.StringVar(&cfg.VaultCaCertPath, "ca-cert-path", "", "Path to vault CA certificate")
 	flag.BoolVar(&cfg.TlsSkipVerify, "tls-skip-verify", false, "Skip TLS certificate verification")
 
 	flag.IntVar(&cfg.UnlockShares, "unlock-shares", 1, "Number of unlock shares")
