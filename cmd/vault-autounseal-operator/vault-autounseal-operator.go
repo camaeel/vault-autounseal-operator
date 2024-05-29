@@ -18,10 +18,10 @@ func main() {
 	flag.StringVar(&cfg.Namespace, "namespace", "vault", "Namespace running vault")
 
 	flag.StringVar(&cfg.ServiceDomain, "service-domain", "vault-internal.vault.svc.cluster.local", "DNS Name for accessing vault. In HA mode should be set to vault headles service providing all pod endpoints.")
-	flag.StringVar(&cfg.ServiceScheme, "service-scheme", "https", "Vaul service scheme. Valid values: http, https")
+	flag.StringVar(&cfg.ServiceScheme, "service-scheme", "https", "Vault service scheme. Valid values: http, https")
 	flag.IntVar(&cfg.ServicePort, "service-port", 8200, "Vaul service port")
 	flag.StringVar(&cfg.VaultCaCertPath, "ca-cert-path", "", "Path to vault CA certificate")
-	flag.BoolVar(&cfg.TlsSkipVerify, "tls-skip-verify", false, "Skip TLS certificate verification")
+	flag.BoolVar(&cfg.TlsSkipVerify, "tls-skip-verify", false, "Skip vault TLS certificate verification, default: false")
 
 	flag.IntVar(&cfg.UnlockShares, "unlock-shares", 1, "Number of unlock shares")
 	flag.IntVar(&cfg.UnlockThreshold, "unlock-threshold", 1, "Number of unlock shares threshold")
@@ -35,6 +35,8 @@ func main() {
 
 	flag.StringVar(&cfg.LogFormat, "log-format", "json", "Log format. Allowed values are: text, json. Default is json. ")
 	flag.StringVar(&cfg.LogLevel, "log-level", "info", "Log level. Allowed values are: debug, info, warn, error. Default is info.")
+
+	flag.StringVar(&cfg.HandlerTimeout, "timeout", "30s", "Operator handler timeout. Default is 30s")
 
 	flag.Parse()
 	err := cfg.Initialize()

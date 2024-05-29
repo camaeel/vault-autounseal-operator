@@ -8,6 +8,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"log/slog"
+	"strconv"
 	"testing"
 )
 
@@ -23,13 +25,13 @@ func TestIsInitialized_True(t *testing.T) {
 	pod := corev1.Pod{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "test-pod",
-			Annotations: map[string]string{
+			Labels: map[string]string{
 				"vault-initialized": "true",
 			},
 		},
 	}
 
-	res := isInitialized(pod)
+	res := isInitialized(&pod)
 	assert.True(t, res)
 }
 
@@ -37,20 +39,20 @@ func TestIsInitialized_False(t *testing.T) {
 	pod := corev1.Pod{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "test-pod",
-			Annotations: map[string]string{
+			Labels: map[string]string{
 				"vault-initialized": "false",
 			},
 		},
 	}
 
-	res := isInitialized(pod)
+	res := isInitialized(&pod)
 	assert.False(t, res)
 }
 
 func TestIsInitialized_MissingAnnotation(t *testing.T) {
 	pod := corev1.Pod{}
 
-	res := isInitialized(pod)
+	res := isInitialized(&pod)
 	assert.False(t, res)
 }
 
@@ -58,13 +60,13 @@ func TestIsInitialized_InvalidAnnotationValue(t *testing.T) {
 	pod := corev1.Pod{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "test-pod",
-			Annotations: map[string]string{
+			Labels: map[string]string{
 				"vault-initialized": "invalid",
 			},
 		},
 	}
 
-	res := isInitialized(pod)
+	res := isInitialized(&pod)
 	assert.False(t, res)
 }
 
@@ -72,13 +74,13 @@ func TestIsSealed_True(t *testing.T) {
 	pod := corev1.Pod{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "test-pod",
-			Annotations: map[string]string{
+			Labels: map[string]string{
 				"vault-sealed": "true",
 			},
 		},
 	}
 
-	res := isSealed(pod)
+	res := isSealed(&pod)
 	assert.True(t, res)
 }
 
@@ -86,20 +88,20 @@ func TestIsSealed_False(t *testing.T) {
 	pod := corev1.Pod{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "test-pod",
-			Annotations: map[string]string{
+			Labels: map[string]string{
 				"vault-sealed": "false",
 			},
 		},
 	}
 
-	res := isSealed(pod)
+	res := isSealed(&pod)
 	assert.False(t, res)
 }
 
 func TestIsSealed_MissingAnnotation(t *testing.T) {
 	pod := corev1.Pod{}
 
-	res := isSealed(pod)
+	res := isSealed(&pod)
 	assert.False(t, res)
 }
 
@@ -107,13 +109,13 @@ func TestIsSealed_InvalidAnnotationValue(t *testing.T) {
 	pod := corev1.Pod{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "test-pod",
-			Annotations: map[string]string{
+			Labels: map[string]string{
 				"vault-sealed": "invalid",
 			},
 		},
 	}
 
-	res := isSealed(pod)
+	res := isSealed(&pod)
 	assert.False(t, res)
 }
 
@@ -121,13 +123,13 @@ func TestIsLeader_True(t *testing.T) {
 	pod := corev1.Pod{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "test-pod",
-			Annotations: map[string]string{
+			Labels: map[string]string{
 				"vault-active": "true",
 			},
 		},
 	}
 
-	res := isLeader(pod)
+	res := isLeader(&pod)
 	assert.True(t, res)
 }
 
@@ -135,20 +137,20 @@ func TestIsLeader_False(t *testing.T) {
 	pod := corev1.Pod{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "test-pod",
-			Annotations: map[string]string{
+			Labels: map[string]string{
 				"vault-active": "false",
 			},
 		},
 	}
 
-	res := isLeader(pod)
+	res := isLeader(&pod)
 	assert.False(t, res)
 }
 
 func TestIsLeader_MissingAnnotation(t *testing.T) {
 	pod := corev1.Pod{}
 
-	res := isLeader(pod)
+	res := isLeader(&pod)
 	assert.False(t, res)
 }
 
@@ -162,7 +164,7 @@ func TestIsLeader_InvalidAnnotationValue(t *testing.T) {
 		},
 	}
 
-	res := isLeader(pod)
+	res := isLeader(&pod)
 	assert.False(t, res)
 }
 
@@ -220,7 +222,12 @@ func TestUnseal(t *testing.T) {
 	assert.True(t, sealStatusBefore.Initialized)
 	assert.True(t, sealStatusBefore.Sealed)
 
-	err = unseal(ctx, vaultClient, initData.Keys)
+	unsealKeys := map[string][]byte{}
+	for k, v := range initData.Keys {
+		unsealKeys[strconv.Itoa(k)] = []byte(v)
+	}
+
+	err = unseal(slog.Default(), ctx, vaultClient, unsealKeys)
 	assert.NoError(t, err)
 
 	sealStatus, err := vaultClient.Sys().SealStatus()

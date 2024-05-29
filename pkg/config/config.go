@@ -33,6 +33,9 @@ type Config struct {
 	ServiceScheme         string
 	VaultRootTokenSecret  string
 	VaultUnlockKeysSecret string
+
+	HandlerTimeout         string
+	HandlerTimeoutDuration time.Duration
 }
 
 func (cfg *Config) Initialize() error {
@@ -47,6 +50,7 @@ func (cfg *Config) Initialize() error {
 }
 
 func (cfg *Config) Validate() error {
+	var err error
 	if cfg.LogFormat != "text" && cfg.LogFormat != "json" {
 		return fmt.Errorf("wrong log format %s. Allowed values are: json, text", cfg.LogFormat)
 	}
@@ -58,6 +62,11 @@ func (cfg *Config) Validate() error {
 		cfg.LogLevel != strings.ToLower(slog.LevelWarn.String()) &&
 		cfg.LogLevel != strings.ToLower(slog.LevelError.String()) {
 		return fmt.Errorf("wrong log level %s. Allowed values are: debug, info, warn, error", cfg.LogLevel)
+	}
+
+	cfg.HandlerTimeoutDuration, err = time.ParseDuration(cfg.HandlerTimeout)
+	if err != nil {
+		return fmt.Errorf("wrong duration for timeout: %v", err)
 	}
 
 	return nil

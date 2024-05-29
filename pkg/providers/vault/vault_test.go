@@ -18,6 +18,7 @@ func TestGetVaultClient(t *testing.T) {
 		ServiceDomain:   "vault-internal.vault.svc.cluster.local",
 		VaultCaCertPath: cert,
 		ServicePort:     8200,
+		ServiceScheme:   "https",
 	}
 	pod := corev1.Pod{
 		ObjectMeta: metav1.ObjectMeta{
@@ -26,7 +27,7 @@ func TestGetVaultClient(t *testing.T) {
 		Spec: corev1.PodSpec{},
 	}
 
-	res, err := GetVaultClient(&cfg, pod)
+	res, err := GetVaultClient(&cfg, &pod)
 	assert.NoError(t, err)
 	assert.NotNil(t, res)
 	assert.Equal(t, "https://vault-0.vault-internal.vault.svc.cluster.local:8200", res.Address())

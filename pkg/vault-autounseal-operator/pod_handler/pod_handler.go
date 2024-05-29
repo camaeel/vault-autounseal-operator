@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	vaultProvider "github.com/camaeel/vault-autounseal-operator/pkg/providers/vault"
-	"golang.org/x/exp/maps"
 	"log/slog"
 	"sync"
 
@@ -22,10 +21,10 @@ var mutex = &sync.RWMutex{}
 func GetPodHandlerFunctions(cfg *config.Config, ctx context.Context, secretLister listerv1.SecretLister) cache.ResourceEventHandlerFuncs {
 	ret := cache.ResourceEventHandlerFuncs{
 		AddFunc: func(newObj interface{}) {
-			podHandler(cfg, ctx, secretLister, newObj)
+			podHandler(cfg, ctx, secretLister, newObj.(*corev1.Pod))
 		},
 		UpdateFunc: func(oldObj, newObj interface{}) {
-			podHandler(cfg, ctx, secretLister, newObj)
+			podHandler(cfg, ctx, secretLister, newObj.(*corev1.Pod))
 		},
 		DeleteFunc: nil,
 	}
@@ -33,61 +32,77 @@ func GetPodHandlerFunctions(cfg *config.Config, ctx context.Context, secretListe
 
 }
 
-func podHandler(cfg *config.Config, ctx context.Context, secretLister listerv1.SecretLister, obj interface{}) {
-	mutex.RLock()
-	defer mutex.RUnlock()
+func podHandler(cfg *config.Config, ctx2 context.Context, secretLister listerv1.SecretLister, pod *corev1.Pod) {
+	logger := slog.With(slog.String("pod", pod.Name))
+	ctx, cancel := context.WithTimeout(ctx2, cfg.HandlerTimeoutDuration)
+	defer cancel()
+	logger.Debug("Starting pod handler")
 
-	slog.Debug("Starting pod handler", "pod", obj.(*corev1.Pod).Name)
-
-	vaultClient, err := vaultProvider.GetVaultClient(cfg, obj.(corev1.Pod))
+	vaultClient, err := vaultProvider.GetVaultClient(cfg, pod)
 	if err != nil {
-		slog.Error(fmt.Sprintf("Can't get vault client for pod, due to: %v", err))
+		logger.Error(fmt.Sprintf("Can't get vault client for pod, due to: %v", err))
 		return
 	}
 
-	initSecret, err := operatorSecrets.GetUnlockSecret(cfg, secretLister)
-	if err != nil {
-		if !errors.IsNotFound(err) {
-			slog.Error("can't get vault initialization secret: %v", err)
-			return
-		}
-		initSecret = nil
-	}
-
-	if !isInitialized(obj.(corev1.Pod)) {
-		if initSecret != nil {
-			mutex.Lock()
+	if !isInitialized(pod) {
+		locked := mutex.TryLock()
+		if locked {
 			defer mutex.Unlock()
-
-			initData, err := initialize(cfg, ctx, vaultClient)
-			if err != nil {
-				slog.Error("can't initialize vault: %v", err)
-				return
-			}
-
-			err = operatorSecrets.CreateUnlockSecret(cfg, ctx, initData)
-			if err != nil {
-				slog.Error("can't create vault initialization secret: %v", err)
-				return
-			}
-			//how to handle if this fails. Then cluster is initialized but operator doesn't have initialization data. Cluster needs to be cleaned and initialized from scratch - might be detected and at least suggested in the logs.
-			err = operatorSecrets.CreateOrReplaceRootTokenSecret(cfg, ctx, initData)
-			if err != nil {
-				slog.Error("can't create root token secret: %v", err)
-			}
-		}
-		return //this should trigger another call to this method wit initialized=true
-	}
-
-	if isSealed(obj.(corev1.Pod)) {
-		if initSecret == nil {
-			slog.Error("init secret is not initialized, so can't unseal")
+		} else {
+			logger.Warn("can't obtain Write lock. Probably initialization in progress")
 			return
 		}
-		err := unseal(ctx, vaultClient, maps.Values(initSecret.StringData)) //TODO: here
-		if err != nil {
-			slog.Error("can't unseal vault: %v", err)
+
+		logger.Info("Pod not initialized. Attempting initialization")
+		_, err := operatorSecrets.GetUnlockSecret(cfg, secretLister)
+		if err != nil && !errors.IsNotFound(err) {
+			logger.Error(fmt.Sprintf("can't get vault initialization secret: %v", err))
+			return
 		}
+		if err == nil {
+			logger.Error(fmt.Sprintf("Initialization data secret: %s already exists, but the cluster is not yet initialized. Probably an error. Delete secret %s in namespace %s, and try again.", cfg.VaultUnlockKeysSecret, cfg.VaultUnlockKeysSecret, cfg.Namespace))
+			return
+		}
+
+		initData, err := initialize(cfg, ctx, vaultClient)
+		if err != nil {
+			logger.Error(fmt.Sprintf("can't initialize vault: %v", err))
+			return
+		}
+		logger.Info("Pod initialized")
+
+		err = operatorSecrets.CreateUnlockSecret(cfg, ctx, initData)
+		if err != nil {
+			logger.Error(fmt.Sprintf("can't create vault initialization secret: %v", err))
+			return
+		}
+		logger.Info("Init data secret created", "secret", cfg.VaultUnlockKeysSecret)
+		logger.Info("Attempting to create root token secret", "secret", cfg.VaultRootTokenSecret)
+		err = operatorSecrets.CreateOrReplaceRootTokenSecret(cfg, ctx, initData)
+		if err != nil {
+			logger.Error(fmt.Sprintf("can't create root token secret: %v", err))
+			return
+		}
+		logger.Info("Root token secret created", "secret", cfg.VaultRootTokenSecret)
+
+	}
+
+	if isSealed(pod) {
+		mutex.Lock()
+		defer mutex.Unlock()
+
+		logger.Info("Pod is sealed")
+		initSecret, err := operatorSecrets.GetUnlockSecret(cfg, secretLister)
+		if err != nil {
+			logger.Error(fmt.Sprintf("can't usneal because, can't get vault initialization secret: %v", err))
+			return
+		}
+		err = unseal(logger, ctx, vaultClient, initSecret.Data)
+		if err != nil {
+			logger.Error(fmt.Sprintf("can't unseal vault: %v", err), "pod", pod.Name)
+			return
+		}
+		logger.Info("Pod has been unsealed")
 		return
 	}
 
@@ -96,16 +111,16 @@ func podHandler(cfg *config.Config, ctx context.Context, secretLister listerv1.S
 
 }
 
-func isInitialized(pod corev1.Pod) bool {
-	return pod.Annotations["vault-initialized"] == "true"
+func isInitialized(pod *corev1.Pod) bool {
+	return pod.Labels["vault-initialized"] == "true"
 }
 
-func isSealed(pod corev1.Pod) bool {
-	return pod.Annotations["vault-sealed"] == "true"
+func isSealed(pod *corev1.Pod) bool {
+	return pod.Labels["vault-sealed"] == "true"
 }
 
-func isLeader(pod corev1.Pod) bool {
-	return pod.Annotations["vault-active"] == "true"
+func isLeader(pod *corev1.Pod) bool {
+	return pod.Labels["vault-active"] == "true"
 }
 
 func initialize(cfg *config.Config, ctx context.Context, vaultClient *vault.Client) (*vault.InitResponse, error) {
@@ -121,9 +136,12 @@ func initialize(cfg *config.Config, ctx context.Context, vaultClient *vault.Clie
 	return resp, err
 }
 
-func unseal(ctx context.Context, vaultClient *vault.Client, unsealData []string) error {
-	for i := range unsealData {
-		resp, err := vaultClient.Sys().UnsealWithContext(ctx, unsealData[i])
+func unseal(logger *slog.Logger, ctx context.Context, vaultClient *vault.Client, unsealData map[string][]byte) error {
+
+	for k, v := range unsealData {
+		unsealKey := string(v)
+		logger.Info(fmt.Sprintf("Unsealing vault with key %s", k))
+		resp, err := vaultClient.Sys().UnsealWithContext(ctx, unsealKey)
 		if err != nil {
 			return err
 		}
