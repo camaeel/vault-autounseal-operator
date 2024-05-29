@@ -21,11 +21,14 @@ type Config struct {
 	PodSelector         string
 	StatefulsetSelector string
 
-	K8sClient             kubernetes.Interface
-	InformerResync        time.Duration
-	VaultCaCertPath       string
-	VaultCaCert           string
-	TlsSkipVerify         bool
+	K8sClient            kubernetes.Interface
+	InformerResync       time.Duration
+	VaultCaCertPath      string
+	VaultCaCert          string
+	TlsSkipVerify        bool
+	VaultTimeout         string
+	VaultTimeoutDuration time.Duration
+
 	UnlockShares          int
 	UnlockThreshold       int
 	ServiceDomain         string
@@ -66,7 +69,12 @@ func (cfg *Config) Validate() error {
 
 	cfg.HandlerTimeoutDuration, err = time.ParseDuration(cfg.HandlerTimeout)
 	if err != nil {
-		return fmt.Errorf("wrong duration for timeout: %v", err)
+		return fmt.Errorf("wrong duration for handler timeout: %v", err)
+	}
+
+	cfg.VaultTimeoutDuration, err = time.ParseDuration(cfg.VaultTimeout)
+	if err != nil {
+		return fmt.Errorf("wrong duration for vault timeout: %v", err)
 	}
 
 	return nil

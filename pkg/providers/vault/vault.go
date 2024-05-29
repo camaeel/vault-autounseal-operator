@@ -1,37 +1,43 @@
 package vault
 
 import (
+	"context"
 	"fmt"
 	"github.com/camaeel/vault-autounseal-operator/pkg/config"
-	vaultapi "github.com/hashicorp/vault/api"
 	corev1 "k8s.io/api/core/v1"
-	"log/slog"
+
+	vault "github.com/hashicorp/vault/api"
 )
 
-func GetVaultClient(cfg *config.Config, pod *corev1.Pod) (*vaultapi.Client, error) {
-	defaultCfg := vaultapi.DefaultConfig() // modify for more granular configuration
-	defaultCfg.Address = fmt.Sprintf("%s://%s.%s:%d", cfg.ServiceScheme, pod.Name, cfg.ServiceDomain, cfg.ServicePort)
-	//defaultCfg.Address = fmt.Sprintf("%s://%s:%d", cfg.ServiceScheme, "127.0.0.1", cfg.ServicePort)
-	defaultCfg.Timeout = cfg.HandlerTimeoutDuration
-	defaultCfg.MaxRetries = 0
+func newVaultClient(cfg *config.Config, pod *corev1.Pod) (*vault.Client, error) {
 
-	tlsConfig := vaultapi.TLSConfig{
+	config := vault.DefaultConfig() // modify for more granular configuration
+	config.Address = fmt.Sprintf("%s://%s.%s:%d", cfg.ServiceScheme, pod.Name, cfg.ServiceDomain, cfg.ServicePort)
+	config.Timeout = cfg.VaultTimeoutDuration
+	//defaultCfg.MaxRetries = 0?
+
+	tlsConfig := vault.TLSConfig{
 		CACert:        cfg.VaultCaCert,
+		Insecure:      cfg.TlsSkipVerify,
 		TLSServerName: fmt.Sprintf("%s.%s", pod.Name, cfg.ServiceDomain),
-		//Insecure:      true,
-		Insecure: cfg.TlsSkipVerify,
 	}
-	err := defaultCfg.ConfigureTLS(&tlsConfig)
+	err := config.ConfigureTLS(&tlsConfig)
 	if err != nil {
 		return nil, err
 	}
 
-	client, err := vaultapi.NewClient(defaultCfg)
+	client, err := vault.NewClient(config)
 	if err != nil {
 		return nil, fmt.Errorf("unable to initialize vault client: %w", err)
 	}
 
-	slog.Debug("Created vault client", "pod", pod.Name, "address", defaultCfg.Address)
+	return client, nil
+}
 
-	return client, err
+func GetVaultClusterNode(ctx context.Context, cfg *config.Config, pod *corev1.Pod) (Node, error) {
+	var err error
+	var node Node
+	node.Client, err = newVaultClient(cfg, pod)
+
+	return node, err
 }
