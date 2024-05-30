@@ -4,12 +4,12 @@ import (
 	"context"
 	"fmt"
 	vaultProvider "github.com/camaeel/vault-autounseal-operator/pkg/providers/vault"
+	"golang.org/x/exp/maps"
 	"log/slog"
 	"sync"
 
 	"github.com/camaeel/vault-autounseal-operator/pkg/config"
 	operatorSecrets "github.com/camaeel/vault-autounseal-operator/pkg/vault-autounseal-operator/secrets"
-	vault "github.com/hashicorp/vault/api"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
 	listerv1 "k8s.io/client-go/listers/core/v1"
@@ -38,13 +38,14 @@ func podHandler(cfg *config.Config, ctx2 context.Context, secretLister listerv1.
 	defer cancel()
 	logger.Debug("Starting pod handler")
 
-	vaultClient, err := vaultProvider.GetVaultClient(cfg, pod)
+	vaultNode, err := vaultProvider.GetVaultClusterNode(ctx, cfg, pod)
 	if err != nil {
 		logger.Error(fmt.Sprintf("Can't get vault client for pod, due to: %v", err))
 		return
 	}
 
-	if !isInitialized(pod) {
+	sealed, initialized, err := vaultNode.GetSealStatus(ctx)
+	if !initialized {
 		locked := mutex.TryLock()
 		if locked {
 			defer mutex.Unlock()
@@ -64,21 +65,21 @@ func podHandler(cfg *config.Config, ctx2 context.Context, secretLister listerv1.
 			return
 		}
 
-		initData, err := initialize(cfg, ctx, vaultClient)
+		unsealKeys, rootToken, err := vaultNode.Initialize(cfg, ctx)
 		if err != nil {
 			logger.Error(fmt.Sprintf("can't initialize vault: %v", err))
 			return
 		}
 		logger.Info("Pod initialized")
 
-		err = operatorSecrets.CreateUnlockSecret(cfg, ctx, initData)
+		err = operatorSecrets.CreateUnlockSecret(cfg, ctx, unsealKeys)
 		if err != nil {
 			logger.Error(fmt.Sprintf("can't create vault initialization secret: %v", err))
 			return
 		}
 		logger.Info("Init data secret created", "secret", cfg.VaultUnlockKeysSecret)
 		logger.Info("Attempting to create root token secret", "secret", cfg.VaultRootTokenSecret)
-		err = operatorSecrets.CreateOrReplaceRootTokenSecret(cfg, ctx, initData)
+		err = operatorSecrets.CreateOrReplaceRootTokenSecret(cfg, ctx, rootToken)
 		if err != nil {
 			logger.Error(fmt.Sprintf("can't create root token secret: %v", err))
 			return
@@ -87,7 +88,7 @@ func podHandler(cfg *config.Config, ctx2 context.Context, secretLister listerv1.
 
 	}
 
-	if isSealed(pod) {
+	if sealed {
 		mutex.Lock()
 		defer mutex.Unlock()
 
@@ -97,7 +98,8 @@ func podHandler(cfg *config.Config, ctx2 context.Context, secretLister listerv1.
 			logger.Error(fmt.Sprintf("can't usneal because, can't get vault initialization secret: %v", err))
 			return
 		}
-		err = unseal(logger, ctx, vaultClient, initSecret.Data)
+		err = vaultNode.Unseal(logger, ctx, maps.Values(initSecret.Data))
+
 		if err != nil {
 			logger.Error(fmt.Sprintf("can't unseal vault: %v", err), "pod", pod.Name)
 			return
@@ -109,47 +111,4 @@ func podHandler(cfg *config.Config, ctx2 context.Context, secretLister listerv1.
 	// check if certificate served by vault doesn't match one in secret
 	//// drain pod (so the API will keep minimum pods according to PDB)
 
-}
-
-func isInitialized(pod *corev1.Pod) bool {
-	return pod.Labels["vault-initialized"] == "true"
-}
-
-func isSealed(pod *corev1.Pod) bool {
-	return pod.Labels["vault-sealed"] == "true"
-}
-
-func isLeader(pod *corev1.Pod) bool {
-	return pod.Labels["vault-active"] == "true"
-}
-
-func initialize(cfg *config.Config, ctx context.Context, vaultClient *vault.Client) (*vault.InitResponse, error) {
-	req := vault.InitRequest{
-		SecretShares:    cfg.UnlockShares,
-		SecretThreshold: cfg.UnlockThreshold,
-	}
-
-	resp, err := vaultClient.Sys().InitWithContext(ctx, &req)
-	if err != nil {
-		slog.Error("Can't initialize vault")
-	}
-	return resp, err
-}
-
-func unseal(logger *slog.Logger, ctx context.Context, vaultClient *vault.Client, unsealData map[string][]byte) error {
-
-	for k, v := range unsealData {
-		unsealKey := string(v)
-		logger.Info(fmt.Sprintf("Unsealing vault with key %s", k))
-		resp, err := vaultClient.Sys().UnsealWithContext(ctx, unsealKey)
-		if err != nil {
-			return err
-		}
-		slog.Info(fmt.Sprintf("unseal resp: %v", resp))
-	}
-	return nil
-}
-
-func drain(pod corev1.Pod) error {
-	return nil
 }

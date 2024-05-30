@@ -11,22 +11,24 @@ import (
 
 func newVaultClient(cfg *config.Config, pod *corev1.Pod) (*vault.Client, error) {
 
-	config := vault.DefaultConfig() // modify for more granular configuration
-	config.Address = fmt.Sprintf("%s://%s.%s:%d", cfg.ServiceScheme, pod.Name, cfg.ServiceDomain, cfg.ServicePort)
-	config.Timeout = cfg.VaultTimeoutDuration
+	defaultConfig := vault.DefaultConfig() // modify for more granular configuration
+	defaultConfig.Address = fmt.Sprintf("%s://%s.%s:%d", cfg.ServiceScheme, pod.Name, cfg.ServiceDomain, cfg.ServicePort)
+	defaultConfig.Timeout = cfg.VaultTimeoutDuration
 	//defaultCfg.MaxRetries = 0?
+
+	defaultConfig.Address = "https://127.0.0.1:8200"
 
 	tlsConfig := vault.TLSConfig{
 		CACert:        cfg.VaultCaCert,
 		Insecure:      cfg.TlsSkipVerify,
 		TLSServerName: fmt.Sprintf("%s.%s", pod.Name, cfg.ServiceDomain),
 	}
-	err := config.ConfigureTLS(&tlsConfig)
+	err := defaultConfig.ConfigureTLS(&tlsConfig)
 	if err != nil {
 		return nil, err
 	}
 
-	client, err := vault.NewClient(config)
+	client, err := vault.NewClient(defaultConfig)
 	if err != nil {
 		return nil, fmt.Errorf("unable to initialize vault client: %w", err)
 	}

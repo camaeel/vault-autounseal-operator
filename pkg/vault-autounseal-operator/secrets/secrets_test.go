@@ -3,7 +3,6 @@ package secrets
 import (
 	"context"
 	"github.com/camaeel/vault-autounseal-operator/pkg/config"
-	vault "github.com/hashicorp/vault/api"
 	"github.com/stretchr/testify/assert"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
@@ -19,11 +18,9 @@ func TestCreateOrReplaceRootTokenSecretNew(t *testing.T) {
 		K8sClient:            fake.NewSimpleClientset(),
 		VaultRootTokenSecret: "root-token-secret",
 	}
-	initData := vault.InitResponse{
-		RootToken: "root-token-value",
-	}
+	rootToken := "token123-secret-value-456"
 
-	err := CreateOrReplaceRootTokenSecret(&cfg, context.TODO(), &initData)
+	err := CreateOrReplaceRootTokenSecret(&cfg, context.TODO(), rootToken)
 	assert.NoError(t, err)
 
 	list, err := cfg.K8sClient.CoreV1().Secrets(v1.NamespaceAll).List(context.TODO(), v1.ListOptions{})
@@ -31,7 +28,7 @@ func TestCreateOrReplaceRootTokenSecretNew(t *testing.T) {
 	assert.NotNil(t, list)
 	assert.Len(t, list.Items, 1)
 	strData := list.Items[0].StringData
-	assert.Equal(t, map[string]string{"rootToken": "root-token-value"}, strData)
+	assert.Equal(t, map[string]string{"token": "token123-secret-value-456"}, strData)
 }
 
 func TestCreateOrReplaceRootTokenSecretExists(t *testing.T) {
@@ -46,11 +43,9 @@ func TestCreateOrReplaceRootTokenSecretExists(t *testing.T) {
 		K8sClient:            fake.NewSimpleClientset(&existingSecret),
 		VaultRootTokenSecret: "root-token-secret",
 	}
-	initData := vault.InitResponse{
-		RootToken: "root-token-value",
-	}
+	rootToken := "token364564646-root"
 
-	err := CreateOrReplaceRootTokenSecret(&cfg, context.TODO(), &initData)
+	err := CreateOrReplaceRootTokenSecret(&cfg, context.TODO(), rootToken)
 	assert.NoError(t, err)
 
 	list, err := cfg.K8sClient.CoreV1().Secrets(v1.NamespaceAll).List(context.TODO(), v1.ListOptions{})
@@ -58,7 +53,7 @@ func TestCreateOrReplaceRootTokenSecretExists(t *testing.T) {
 	assert.NotNil(t, list)
 	assert.Len(t, list.Items, 1)
 	strData := list.Items[0].StringData
-	assert.Equal(t, map[string]string{"rootToken": "root-token-value"}, strData)
+	assert.Equal(t, map[string]string{"token": "token364564646-root"}, strData)
 }
 
 func TestCreateUnlockSecret(t *testing.T) {
@@ -67,10 +62,9 @@ func TestCreateUnlockSecret(t *testing.T) {
 		K8sClient:             fake.NewSimpleClientset(),
 		VaultUnlockKeysSecret: "unseal-secret",
 	}
-	initData := vault.InitResponse{
-		Keys: []string{"key1", "key2", "key3"},
-	}
-	err := CreateUnlockSecret(&cfg, context.TODO(), &initData)
+	unsealKeys := []string{"key1", "key2", "key3"}
+
+	err := CreateUnlockSecret(&cfg, context.TODO(), unsealKeys)
 	assert.NoError(t, err)
 	list, err := cfg.K8sClient.CoreV1().Secrets(v1.NamespaceAll).List(context.TODO(), v1.ListOptions{})
 	assert.NoError(t, err)

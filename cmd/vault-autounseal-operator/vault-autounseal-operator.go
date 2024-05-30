@@ -25,8 +25,8 @@ func main() {
 
 	flag.IntVar(&cfg.UnlockShares, "unlock-shares", 1, "Number of unlock shares")
 	flag.IntVar(&cfg.UnlockThreshold, "unlock-threshold", 1, "Number of unlock shares threshold")
-	flag.StringVar(&cfg.VaultRootTokenSecret, "vault-root-token-secret", "vault-root-token", "Vault root token secret name")
-	flag.StringVar(&cfg.VaultUnlockKeysSecret, "vault-unlock-keys-secret", "vault-unlock-keys", "Vault unlock keys secret name")
+	flag.StringVar(&cfg.VaultRootTokenSecret, "vault-root-token-secret", "vault-autounseal-root-token", "Vault root token secret name")
+	flag.StringVar(&cfg.VaultUnlockKeysSecret, "vault-unlock-keys-secret", "vault-autounseal-unlock-keys", "Vault unlock keys secret name")
 	// kubeconfig := flag.String("kubeconfig", "", "Overwrite kubeconfig path")
 
 	flag.StringVar(&cfg.LeaseName, "leader-election-lease-name", "vault-autounseal-leader", "Name of the lease object for leader election")
@@ -37,6 +37,7 @@ func main() {
 	flag.StringVar(&cfg.LogLevel, "log-level", "info", "Log level. Allowed values are: debug, info, warn, error. Default is info.")
 
 	flag.StringVar(&cfg.HandlerTimeout, "timeout", "30s", "Operator handler timeout. Default is 30s")
+	flag.StringVar(&cfg.VaultTimeout, "vault-timeout", "10s", "Vault request timeout. Default is 10s")
 
 	flag.Parse()
 	err := cfg.Initialize()
