@@ -85,10 +85,7 @@ func podHandler(cfg *config.Config, ctx2 context.Context, secretLister listerv1.
 			return
 		}
 		logger.Info("Root token secret created", "secret", cfg.VaultRootTokenSecret)
-
-	}
-
-	if sealed {
+	} else if sealed {
 		mutex.Lock()
 		defer mutex.Unlock()
 

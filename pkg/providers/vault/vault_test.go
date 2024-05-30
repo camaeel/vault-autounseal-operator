@@ -11,7 +11,6 @@ import (
 )
 
 func TestGetVaultClusterNode(t *testing.T) {
-	t.Skip()
 	ctx := context.TODO()
 	cfg := config.Config{
 		TlsSkipVerify:        false,
