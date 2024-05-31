@@ -46,37 +46,37 @@ func Exec(ctx context.Context, cfg *config.Config) error {
 			podTweakListOptionsFunc := func(opts *v1.ListOptions) {
 				opts.LabelSelector = cfg.PodSelector
 			}
-			stsTweakListOptionsFunc := func(opts *v1.ListOptions) {
-				opts.LabelSelector = cfg.StatefulsetSelector
-
-			}
+			//stsTweakListOptionsFunc := func(opts *v1.ListOptions) {
+			//	opts.LabelSelector = cfg.StatefulsetSelector
+			//
+			//}
 			podFactory := informers.NewSharedInformerFactoryWithOptions(cfg.K8sClient, cfg.InformerResync,
 				informers.WithNamespace(cfg.Namespace),
 				informers.WithTweakListOptions(podTweakListOptionsFunc),
 			)
-			stsFactory := informers.NewSharedInformerFactoryWithOptions(cfg.K8sClient, cfg.InformerResync,
-				informers.WithNamespace(cfg.Namespace),
-				informers.WithTweakListOptions(stsTweakListOptionsFunc),
-			)
+			//stsFactory := informers.NewSharedInformerFactoryWithOptions(cfg.K8sClient, cfg.InformerResync,
+			//	informers.WithNamespace(cfg.Namespace),
+			//	informers.WithTweakListOptions(stsTweakListOptionsFunc),
+			//)
 			secretFactory := informers.NewSharedInformerFactoryWithOptions(cfg.K8sClient, cfg.InformerResync,
 				informers.WithNamespace(cfg.Namespace),
 				// informers.WithTweakListOptions(podTweakListOptionsFunc),
 			)
 
 			podInformerFactory := podFactory.Core().V1().Pods()
-			stsInformerFactory := stsFactory.Apps().V1().StatefulSets()
+			//stsInformerFactory := stsFactory.Apps().V1().StatefulSets()
 			secretInformerFactory := secretFactory.Core().V1().Secrets()
 
 			podInformer := podInformerFactory.Informer()
-			stsInformer := stsInformerFactory.Informer()
+			//stsInformer := stsInformerFactory.Informer()
 			secretInformer := secretInformerFactory.Informer()
 
 			secretLister := secretInformerFactory.Lister()
 
 			podFactory.Start(ctx.Done())
 			podFactory.WaitForCacheSync(ctx.Done())
-			stsFactory.Start(ctx.Done())
-			stsFactory.WaitForCacheSync(ctx.Done())
+			//stsFactory.Start(ctx.Done())
+			//stsFactory.WaitForCacheSync(ctx.Done())
 			secretFactory.Start(ctx.Done())
 			secretFactory.WaitForCacheSync(ctx.Done())
 
@@ -90,10 +90,10 @@ func Exec(ctx context.Context, cfg *config.Config) error {
 				slog.Error("Timed out waiting for caches to sync")
 				cancel()
 			}
-			if !cache.WaitForCacheSync(ctx.Done(), stsInformer.HasSynced) {
-				slog.Error("Timed out waiting for caches to sync")
-				cancel()
-			}
+			//if !cache.WaitForCacheSync(ctx.Done(), stsInformer.HasSynced) {
+			//	slog.Error("Timed out waiting for caches to sync")
+			//	cancel()
+			//}
 			if !cache.WaitForCacheSync(ctx.Done(), secretInformer.HasSynced) {
 				slog.Error("Timed out waiting for caches to sync")
 				cancel()

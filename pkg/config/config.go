@@ -17,9 +17,9 @@ type Config struct {
 	LeaseName      string
 	LeaseNamespace string
 
-	Namespace           string
-	PodSelector         string
-	StatefulsetSelector string
+	Namespace   string
+	PodSelector string
+	//StatefulsetSelector string
 
 	K8sClient            kubernetes.Interface
 	InformerResync       time.Duration
@@ -28,6 +28,9 @@ type Config struct {
 	TlsSkipVerify        bool
 	VaultTimeout         string
 	VaultTimeoutDuration time.Duration
+
+	PodAddresses    string
+	PodAddressesMap map[string]string
 
 	UnlockShares          int
 	UnlockThreshold       int
@@ -41,19 +44,23 @@ type Config struct {
 	HandlerTimeoutDuration time.Duration
 }
 
-func (cfg *Config) Initialize() error {
+func (cfg *Config) InitializeAndValidate() error {
+	var err error
 	if cfg.VaultCaCertPath != "" {
 		cacert, err := os.ReadFile(cfg.VaultCaCertPath)
 		if err != nil {
-			return err
+			return fmt.Errorf("error reading CA cert file: %v", err)
 		}
 		cfg.VaultCaCert = string(cacert)
 	}
-	return nil
-}
 
-func (cfg *Config) Validate() error {
-	var err error
+	if cfg.PodAddresses != "" {
+		cfg.PodAddressesMap, err = parseMap(cfg.PodAddresses)
+		if err != nil {
+			return fmt.Errorf("error parsing pod addresses: %v", err)
+		}
+	}
+
 	if cfg.LogFormat != "text" && cfg.LogFormat != "json" {
 		return fmt.Errorf("wrong log format %s. Allowed values are: json, text", cfg.LogFormat)
 	}

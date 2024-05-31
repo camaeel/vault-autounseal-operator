@@ -57,7 +57,7 @@ func TestUnseal(t *testing.T) {
 	unsealKeys, _, err := n.Initialize(&cfg, context.TODO())
 	assert.NoError(t, err)
 
-	unsealKeyBytes := [][]byte{}
+	unsealKeyBytes := make([][]byte, 0)
 	for i := range unsealKeys {
 		unsealKeyBytes = append(unsealKeyBytes, []byte(unsealKeys[i]))
 	}

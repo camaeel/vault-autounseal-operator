@@ -12,10 +12,13 @@ import (
 func newVaultClient(cfg *config.Config, pod *corev1.Pod) (*vault.Client, error) {
 
 	defaultConfig := vault.DefaultConfig() // modify for more granular configuration
-	defaultConfig.Address = fmt.Sprintf("%s://%s.%s:%d", cfg.ServiceScheme, pod.Name, cfg.ServiceDomain, cfg.ServicePort)
 	defaultConfig.Timeout = cfg.VaultTimeoutDuration
 	//defaultCfg.MaxRetries = 0?
-	//defaultConfig.Address = "https://127.0.0.1:8200"
+	if val, found := cfg.PodAddressesMap[pod.Name]; found {
+		defaultConfig.Address = val
+	} else {
+		defaultConfig.Address = fmt.Sprintf("%s://%s.%s:%d", cfg.ServiceScheme, pod.Name, cfg.ServiceDomain, cfg.ServicePort)
+	}
 
 	tlsConfig := vault.TLSConfig{
 		CACert:        cfg.VaultCaCert,
