@@ -82,6 +82,7 @@ func TestCreateUnlockSecret(t *testing.T) {
 }
 
 func TestGetUnlockSecretNotFound(t *testing.T) {
+	ctx := context.TODO()
 	cfg := config.Config{
 		Namespace:             "vault",
 		K8sClient:             fake.NewSimpleClientset(),
@@ -91,6 +92,9 @@ func TestGetUnlockSecretNotFound(t *testing.T) {
 	fakeInformer := informers.NewSharedInformerFactoryWithOptions(cfg.K8sClient, 1, informers.WithNamespace(cfg.Namespace))
 	secretInformerFactory := fakeInformer.Core().V1().Secrets()
 	secretLister := secretInformerFactory.Lister()
+
+	fakeInformer.Start(ctx.Done())
+	fakeInformer.WaitForCacheSync(ctx.Done())
 
 	res, err := GetUnlockSecret(&cfg, secretLister)
 	assert.True(t, errors.IsNotFound(err))

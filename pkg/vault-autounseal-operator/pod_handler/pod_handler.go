@@ -3,11 +3,13 @@ package podhandler
 import (
 	"context"
 	"fmt"
+	"log/slog"
+	"sync"
+	"time"
+
 	vaultProvider "github.com/camaeel/vault-autounseal-operator/pkg/providers/vault"
 	"golang.org/x/exp/maps"
 	"k8s.io/apimachinery/pkg/api/errors"
-	"log/slog"
-	"sync"
 
 	"github.com/camaeel/vault-autounseal-operator/pkg/config"
 	operatorSecrets "github.com/camaeel/vault-autounseal-operator/pkg/vault-autounseal-operator/secrets"
@@ -63,21 +65,22 @@ func podHandler(cfg *config.Config, ctx2 context.Context, secretLister listerv1.
 }
 
 func initialize(logger *slog.Logger, ctx context.Context, cfg *config.Config, secretLister listerv1.SecretLister, vaultNode vaultProvider.Node) error {
-	locked := mutex.TryLock()
-	if locked {
-		defer mutex.Unlock()
-	} else {
-		logger.Warn("can't obtain Write lock. Probably initialization in progress")
-		return nil
-	}
+	mutex.Lock()
+	defer mutex.Unlock()
 
 	logger.Info("Pod not initialized. Attempting initialization")
-	_, err := operatorSecrets.GetUnlockSecret(cfg, secretLister)
+	initSecret, err := operatorSecrets.GetUnlockSecret(cfg, secretLister)
 	if err != nil && !errors.IsNotFound(err) {
 		return fmt.Errorf("can't get vault initialization secret: %v", err)
 	}
 	if err == nil {
-		return fmt.Errorf("initialization data secret: %s already exists, but the cluster is not yet initialized. Probably an error. Delete secret %s in namespace %s, and try again.", cfg.VaultUnlockKeysSecret, cfg.VaultUnlockKeysSecret, cfg.Namespace)
+		if initSecret.CreationTimestamp.Add(cfg.InformerResync * 3).Before(time.Now()) {
+			//secret is older than 3 informer resyncs - this shouldn't happen
+			return fmt.Errorf("this pod isn't initialized yet, but initialization secret %s already exists and is older than %s - either this secret is old (from previous initialization) or initialization procedure failed", cfg.VaultUnlockKeysSecret, (3 * cfg.InformerResync).String())
+		} else {
+			logger.Warn(fmt.Sprintf("fmt.Sprintf(\"This vault pod is not yet initialized but initialization data secret: %s already exists and was created less than %s - probably vault is not yet fully initialized", cfg.VaultUnlockKeysSecret, (3 * cfg.InformerResync).String()))
+			return nil
+		}
 	}
 
 	unsealKeys, rootToken, err := vaultNode.Initialize(cfg, ctx)
