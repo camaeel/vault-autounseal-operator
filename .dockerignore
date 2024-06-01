@@ -1,0 +1,7 @@
+charts/
+.github
+manifests/
+Makefile
+*.md
+.vscode
+.idea

@@ -1,0 +1,13 @@
+{{- if and .Values.pdb.enabled (gt .Values.replicaCount 1.0) }}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  labels:
+    {{- include "vault-autounseal-operator.labels" . | nindent 4 }}
+  name: {{ include "vault-autounseal-operator.fullname" . }}-controller
+spec:
+  maxUnavailable: {{ .Values.pdb.maxUnavailable }}
+  selector:
+    matchLabels:
+      {{- include "vault-autounseal-operator.selectorLabels" . | nindent 6 }}
+{{- end }}

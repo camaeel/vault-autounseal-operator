@@ -21,7 +21,7 @@ func newVaultClient(cfg *config.Config, pod *corev1.Pod) (*vault.Client, error) 
 	}
 
 	tlsConfig := vault.TLSConfig{
-		CACert:        cfg.VaultCaCert,
+		CACert:        cfg.VaultCaCertPath,
 		Insecure:      cfg.TlsSkipVerify,
 		TLSServerName: fmt.Sprintf("%s.%s", pod.Name, cfg.ServiceDomain),
 	}

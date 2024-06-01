@@ -58,4 +58,8 @@ kind_install:
 		vault hashicorp/vault \
 		--values manifests/vault-values.yml \
 		--wait
-	
+
+helm_template:
+	helm template vault-autounseal-operator charts/vault-autounseal-operator -n vault
+helm_install:
+	helm upgrade --install vault-autounseal-operator charts/vault-autounseal-operator -n vault

@@ -47,11 +47,10 @@ type Config struct {
 func (cfg *Config) InitializeAndValidate() error {
 	var err error
 	if cfg.VaultCaCertPath != "" {
-		cacert, err := os.ReadFile(cfg.VaultCaCertPath)
+		_, err := os.ReadFile(cfg.VaultCaCertPath)
 		if err != nil {
 			return fmt.Errorf("error reading CA cert file: %v", err)
 		}
-		cfg.VaultCaCert = string(cacert)
 	}
 
 	if cfg.PodAddresses != "" {
