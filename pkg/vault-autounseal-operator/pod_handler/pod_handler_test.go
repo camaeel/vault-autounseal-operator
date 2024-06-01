@@ -157,7 +157,7 @@ func TestInitializeFailRecentInitSecretExists(t *testing.T) {
 	assert.True(t, sealed)
 }
 
-func TestPodHandlerUnseal(t *testing.T) {
+func TestUnseal(t *testing.T) {
 	ctx := context.TODO()
 
 	fakeVault := vaultProvider.GetVault(t, false, 3)
@@ -259,4 +259,123 @@ func TestPodHandlerUnsealFailedNoUnsealSecret(t *testing.T) {
 	assert.NoError(t, err)
 	assert.True(t, initialized)
 	assert.True(t, sealed)
+}
+
+func TestPodHandlerInitialize(t *testing.T) {
+	ctx := context.TODO()
+
+	pod := corev1.Pod{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "vault-0",
+			Namespace: "vault",
+		},
+	}
+
+	fakeVault := vaultProvider.GetVault(t, false, 3)
+	cfg := config.Config{
+		Namespace:              "vault",
+		HandlerTimeoutDuration: 30 * time.Second,
+		VaultTimeoutDuration:   10 * time.Second,
+		UnlockShares:           3,
+		UnlockThreshold:        2,
+		K8sClient:              fake.NewSimpleClientset(),
+		VaultUnlockKeysSecret:  "vault-autounseal-unlock-keys",
+		VaultRootTokenSecret:   "vault-autounseal-root-token",
+		TlsSkipVerify:          true,
+		ServiceScheme:          "https",
+		ServiceDomain:          "vault-internal.vault.svc.cluster.local",
+		PodAddressesMap: map[string]string{
+			"vault-0": fakeVault[0].Client.Address(),
+		},
+	}
+
+	fakeClient := fake.NewSimpleClientset() //no secret
+	fakeInformer := informers.NewSharedInformerFactoryWithOptions(fakeClient, 1, informers.WithNamespace(cfg.Namespace))
+	secretInformerFactory := fakeInformer.Core().V1().Secrets()
+	fakeSecretLister := secretInformerFactory.Lister()
+
+	fakeInformer.Start(ctx.Done())
+	fakeInformer.WaitForCacheSync(ctx.Done())
+
+	vaultNode := vaultProvider.Node{Client: fakeVault[0].Client}
+
+	podHandler(&cfg, ctx, fakeSecretLister, &pod)
+
+	sealed, initialized, err := vaultNode.GetSealStatus(ctx)
+
+	assert.NoError(t, err)
+	assert.True(t, initialized)
+	assert.True(t, sealed)
+
+	unlockSecret, err := cfg.K8sClient.CoreV1().Secrets(cfg.Namespace).Get(ctx, cfg.VaultUnlockKeysSecret, metav1.GetOptions{})
+	assert.NoError(t, err)
+	assert.Len(t, unlockSecret.StringData, cfg.UnlockShares) //probably "feature" of fake client - check StringData instead of Data
+
+	rootSecret, err := cfg.K8sClient.CoreV1().Secrets(cfg.Namespace).Get(ctx, cfg.VaultRootTokenSecret, metav1.GetOptions{})
+	assert.NoError(t, err)
+	assert.Len(t, rootSecret.StringData, 1) //probably "feature" of fake client - check StringData instead of Data
+}
+
+func TestPodHandlerUnseal(t *testing.T) {
+	ctx := context.TODO()
+
+	pod := corev1.Pod{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "vault-0",
+			Namespace: "vault",
+		},
+	}
+
+	fakeVault := vaultProvider.GetVault(t, false, 3)
+	cfg := config.Config{
+		Namespace:              "vault",
+		HandlerTimeoutDuration: 30 * time.Second,
+		VaultTimeoutDuration:   10 * time.Second,
+		UnlockShares:           3,
+		UnlockThreshold:        2,
+		K8sClient:              fake.NewSimpleClientset(),
+		VaultUnlockKeysSecret:  "vault-autounseal-unlock-keys",
+		VaultRootTokenSecret:   "vault-autounseal-root-token",
+		TlsSkipVerify:          true,
+		ServiceScheme:          "https",
+		ServiceDomain:          "vault-internal.vault.svc.cluster.local",
+		PodAddressesMap: map[string]string{
+			"vault-0": fakeVault[0].Client.Address(),
+		},
+	}
+
+	// initialize
+	vaultNode := vaultProvider.Node{
+		Client: fakeVault[0].Client,
+	}
+	initData, _, err := vaultNode.Initialize(&cfg, ctx)
+	initSecretData := map[string][]byte{}
+	for i := range initData {
+		initSecretData[fmt.Sprintf("key%d", i)] = []byte(initData[i])
+	}
+	///
+
+	fakeClient := fake.NewSimpleClientset(
+		&corev1.Secret{
+			ObjectMeta: metav1.ObjectMeta{
+				Name:      cfg.VaultUnlockKeysSecret,
+				Namespace: "vault",
+			},
+			Data: initSecretData,
+		},
+	)
+	fakeInformer := informers.NewSharedInformerFactoryWithOptions(fakeClient, 1, informers.WithNamespace(cfg.Namespace))
+	secretInformerFactory := fakeInformer.Core().V1().Secrets()
+	fakeSecretLister := secretInformerFactory.Lister()
+
+	fakeInformer.Start(ctx.Done())
+	fakeInformer.WaitForCacheSync(ctx.Done())
+
+	podHandler(&cfg, ctx, fakeSecretLister, &pod)
+
+	sealed, initialized, err := vaultNode.GetSealStatus(ctx)
+
+	assert.NoError(t, err)
+	assert.True(t, initialized)
+	assert.False(t, sealed)
 }
