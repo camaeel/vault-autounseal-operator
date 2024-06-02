@@ -20,6 +20,8 @@ import (
 
 var mutex = &sync.RWMutex{}
 
+const RECONCILATION_LOOPS_TO_WAIT = 10
+
 func GetPodHandlerFunctions(cfg *config.Config, ctx context.Context, secretLister listerv1.SecretLister) cache.ResourceEventHandlerFuncs {
 	ret := cache.ResourceEventHandlerFuncs{
 		AddFunc: func(newObj interface{}) {
@@ -74,11 +76,11 @@ func initialize(logger *slog.Logger, ctx context.Context, cfg *config.Config, se
 		return fmt.Errorf("can't get vault initialization secret: %v", err)
 	}
 	if err == nil {
-		if initSecret.CreationTimestamp.Add(cfg.InformerResync * 3).Before(time.Now()) {
-			//secret is older than 3 informer resyncs - this shouldn't happen
-			return fmt.Errorf("this pod isn't initialized yet, but initialization secret %s already exists and is older than %s - either this secret is old (from previous initialization) or initialization procedure failed", cfg.VaultUnlockKeysSecret, (3 * cfg.InformerResync).String())
+		if initSecret.CreationTimestamp.Add(cfg.InformerResync * RECONCILATION_LOOPS_TO_WAIT).Before(time.Now()) {
+			//secret is older than RECONCILATION_LOOPS_TO_WAIT informer resyncs - this shouldn't happen
+			return fmt.Errorf("this pod isn't initialized yet, but initialization secret %s already exists and is older than %s - either this secret is old (from previous initialization) or initialization procedure failed", cfg.VaultUnlockKeysSecret, (RECONCILATION_LOOPS_TO_WAIT * cfg.InformerResync).String())
 		} else {
-			logger.Warn(fmt.Sprintf("fmt.Sprintf(\"This vault pod is not yet initialized but initialization data secret: %s already exists and was created less than %s - probably vault is not yet fully initialized", cfg.VaultUnlockKeysSecret, (3 * cfg.InformerResync).String()))
+			logger.Warn(fmt.Sprintf("fmt.Sprintf(\"This vault pod is not yet initialized but initialization data secret: %s already exists and was created less than %s - probably vault is not yet fully initialized", cfg.VaultUnlockKeysSecret, (RECONCILATION_LOOPS_TO_WAIT * cfg.InformerResync).String()))
 			return nil
 		}
 	}

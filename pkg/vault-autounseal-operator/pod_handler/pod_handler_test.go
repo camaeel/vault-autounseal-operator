@@ -103,7 +103,7 @@ func TestInitializeFailOldInitSecretExists(t *testing.T) {
 
 	err := initialize(slog.Default(), ctx, &cfg, fakeSecretLister, vaultNode)
 	assert.Error(t, err)
-	assert.EqualError(t, err, fmt.Sprintf("this pod isn't initialized yet, but initialization secret vault-autounseal-unlock-keys already exists and is older than %s - either this secret is old (from previous initialization) or initialization procedure failed", (3*cfg.InformerResync).String()))
+	assert.EqualError(t, err, fmt.Sprintf("this pod isn't initialized yet, but initialization secret vault-autounseal-unlock-keys already exists and is older than %s - either this secret is old (from previous initialization) or initialization procedure failed", (RECONCILATION_LOOPS_TO_WAIT*cfg.InformerResync).String()))
 
 	sealed, initialized, err := vaultNode.GetSealStatus(ctx)
 
