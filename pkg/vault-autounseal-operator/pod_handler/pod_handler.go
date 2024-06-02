@@ -78,6 +78,7 @@ func initialize(logger *slog.Logger, ctx context.Context, cfg *config.Config, se
 	if err == nil {
 		if initSecret.CreationTimestamp.Add(cfg.InformerResync * RECONCILATION_LOOPS_TO_WAIT).Before(time.Now()) {
 			//secret is older than RECONCILATION_LOOPS_TO_WAIT informer resyncs - this shouldn't happen
+			//FIXME this happens. It seems that vault takes some short time to connect to cluster and update initialization status
 			return fmt.Errorf("this pod isn't initialized yet, but initialization secret %s already exists and is older than %s - either this secret is old (from previous initialization) or initialization procedure failed", cfg.VaultUnlockKeysSecret, (RECONCILATION_LOOPS_TO_WAIT * cfg.InformerResync).String())
 		} else {
 			logger.Warn(fmt.Sprintf("fmt.Sprintf(\"This vault pod is not yet initialized but initialization data secret: %s already exists and was created less than %s - probably vault is not yet fully initialized", cfg.VaultUnlockKeysSecret, (RECONCILATION_LOOPS_TO_WAIT * cfg.InformerResync).String()))
