@@ -7,6 +7,23 @@ Vault operator for managing vault clusters running in Kubernetes. Operator handl
 
 Operator assumes vault is deployed using official Hashicorp Vault helm chart.
 
+## Installation 
+
+### Installation using helm
+
+First add helm repository:
+```shell
+helm repo add vault-autounseal-operator https://camaeel.github.io/vault-autounseal-operator
+helm repo update
+```
+
+Install:
+```shell
+helm upgrade --install vault-autounseal-operator vault-autounseal-operator/vault-autounseal-operator 
+```
+
+ 
+
 ## Algorithm:
 1. build vault client
 2. get pod seal & init status - https://localhost:8200/v1/sys/seal-status
