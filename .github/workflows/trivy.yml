@@ -1,0 +1,20 @@
+name: build
+on:
+  workflow_call:
+
+jobs:
+  trivy-scan:
+    name: Trivy vulnerability scanner
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Trivy vulnerability scanner in repo mode - non schedule & non master
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          ignore-unfixed: true # we want to have full report
+          severity: 'CRITICAL,HIGH' #report all severities
+          exit-code: '1'
+          format: 'table'

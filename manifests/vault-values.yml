@@ -1,0 +1,162 @@
+global:
+  tlsDisable: false
+injector:
+  enabled: false
+
+server:
+  enabled: "true"
+  logFormat: json
+  livenessProbe:
+    enabled: true
+    path: "/v1/sys/health?standbyok=true&sealedcode=204&drsecondarycode=204&sealedcode=204&uninitcode=204"
+  statefulSet:
+    annotations: {}
+
+    # Set the pod and container security contexts.
+    # If not set, these will default to, and for *not* OpenShift:
+    securityContext:
+      pod:
+        seccompProfile:
+          type: "RuntimeDefault"
+        runAsNonRoot: true
+        runAsGroup: 1000
+        runAsUser: 100
+        fsGroup: 1000
+      container:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+            - ALL
+  resources: {}
+  extraInitContainers:
+    - name: build-bundle
+      image: alpine:latest
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        runAsNonRoot: true
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+            - ALL
+      command: ["/bin/sh", "-c"]
+      args:
+        - |
+          cat certs/vault-server-tls/tls.crt > /certs/vault-tls-bundle/bundle.crt
+          cat certs/vault-server-tls/ca.crt >> /certs/vault-tls-bundle/bundle.crt
+      volumeMounts:
+      - mountPath: /certs/vault-server-tls
+        name: vault-tls
+        readOnly: true
+      - name: vault-tls-bundle
+        mountPath: /certs/vault-tls-bundle
+  volumes:
+    - name: vault-tls-bundle
+      emptyDir: {}
+    - name: vault-tls
+      secret:
+        secretName: vault-tls
+        items:
+          - key: ca.crt
+            path: ca.crt
+          - key: tls.key
+            path: tls.key
+          - key: tls.crt
+            path: tls.crt
+  affinity: {}
+  volumeMounts:
+    - mountPath: /vault/userconfig/vault-server-tls
+      name: vault-tls
+      readOnly: true
+    - name: vault-tls-bundle
+      mountPath:  /vault/userconfig/vault-tls-bundle
+  service:
+    active:
+      annotations:
+        "konghq.com/protocol": https
+  ingress:
+    enabled: true
+    annotations:
+      "ingress.kubernetes.io/force-ssl-redirect": "true"
+      konghq.com/protocols: "https"
+
+    hosts:
+      - host: vault.cluster.local
+        paths: []
+
+  # Enables network policy for server pods
+  networkPolicy:
+    enabled: false #TODO
+    egress: []
+    #          - to:
+    #            - ipBlock:
+    #                cidr: 0.0.0.0/32
+    #            ports:
+    #            - protocol: TCP
+    #              port: 443
+    ingress:
+      - from:
+          - namespaceSelector: {}
+        ports:
+          - port: 8200
+            protocol: TCP
+          - port: 8201
+            protocol: TCP
+
+  dataStorage:
+    enabled: true
+    size: 1Gi
+    storageClass: standard
+
+  auditStorage:
+    enabled: true
+    size: 2Gi
+    storageClass: standard
+  standalone:
+    enabled: "false"
+  ha:
+    enabled: true
+    replicas: 3
+    raft:
+      enabled: true
+      setNodeId: true
+      config: |
+        ui = true
+        listener "tcp" {
+          tls_disable = 0
+          address = "[::]:8200"
+          cluster_address = "[::]:8201"
+          tls_cert_file = "/vault/userconfig/vault-tls-bundle/bundle.crt"
+          tls_key_file  = "/vault/userconfig/vault-server-tls/tls.key"
+          #tls_client_ca_file = "/vault/userconfig/vault-server-tls/ca.crt"
+        
+          # Enable unauthenticated metrics access (necessary for Prometheus Operator)
+          # telemetry { #TODO
+          #   unauthenticated_metrics_access = "true"
+          # }
+        }
+        storage "raft" {
+          path = "/vault/data"
+        
+          # configure auto join for all replicas
+          {{- range until 3 }}
+          retry_join {
+            leader_api_addr = "https://vault-{{ . }}.vault-internal:8200"
+            leader_ca_cert_file = "/vault/userconfig/vault-server-tls/ca.crt"
+            leader_client_cert_file = "/vault/userconfig/vault-server-tls/tls.crt"
+            leader_client_key_file = "/vault/userconfig/vault-server-tls/tls.key"
+          }
+          {{- end }}
+        }
+        telemetry {
+          prometheus_retention_time = "1h"
+          disable_hostname = true
+        }
+        disable_mlock = true
+        
+        service_registration "kubernetes" {}
+
+ui:
+  enabled: true
+csi:
+  enabled: false
