@@ -3,6 +3,16 @@ entries:
   vault-autounseal-operator:
   - apiVersion: v2
     appVersion: v0.1.0
+    created: "2024-06-03T19:11:06.840664153Z"
+    description: A Helm chart for vault-autounseal-operator
+    digest: cb81e010c389560c6c7c70049cffefde06889e589063cc063ca4e349efec6259
+    name: vault-autounseal-operator
+    type: application
+    urls:
+    - https://github.com/camaeel/vault-autounseal-operator/releases/download/vault-autounseal-operator-0.1.2/vault-autounseal-operator-0.1.2.tgz
+    version: 0.1.2
+  - apiVersion: v2
+    appVersion: v0.1.0
     created: "2024-06-03T19:06:31.500154973Z"
     description: A Helm chart for vault-autounseal-operator
     digest: 0369a51f3bd03c41a14fc3959811a6b5fcc46ab266afcfc3e00573c283787cbf
@@ -21,4 +31,4 @@ entries:
     urls:
     - https://github.com/camaeel/vault-autounseal-operator/releases/download/vault-autounseal-operator-0.1.0/vault-autounseal-operator-0.1.0.tgz
     version: 0.1.0
-generated: "2024-06-03T19:06:31.500167376Z"
+generated: "2024-06-03T19:11:06.840677738Z"
