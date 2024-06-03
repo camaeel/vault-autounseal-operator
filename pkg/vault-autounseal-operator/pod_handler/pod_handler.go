@@ -81,7 +81,7 @@ func initialize(logger *slog.Logger, ctx context.Context, cfg *config.Config, se
 			//secret is older than RECONCILATION_LOOPS_TO_WAIT informer resyncs - this shouldn't happen
 			return fmt.Errorf("this pod isn't initialized yet and is older than %s, but initialization secret %s already exists and is older than %s - either this secret is from previously initialized vault or initialization procedure failed", (RECONCILATION_LOOPS_TO_WAIT * cfg.InformerResync).String(), cfg.VaultUnlockKeysSecret, (RECONCILATION_LOOPS_TO_WAIT * cfg.InformerResync).String())
 		} else {
-			logger.Warn(fmt.Sprintf("fmt.Sprintf(\"This vault pod is not yet initialized and was created less than %s ago, but initialization data secret: %s already exists and was created less than %s - probably vault is not yet fully initialized", (RECONCILATION_LOOPS_TO_WAIT * cfg.InformerResync).String(), cfg.VaultUnlockKeysSecret, (RECONCILATION_LOOPS_TO_WAIT * cfg.InformerResync).String()))
+			//logger.Warn(fmt.Sprintf("fmt.Sprintf(\"This vault pod is not yet initialized and was created less than %s ago, but initialization data secret: %s already exists and was created less than %s - probably vault is not yet fully initialized", (RECONCILATION_LOOPS_TO_WAIT * cfg.InformerResync).String(), cfg.VaultUnlockKeysSecret, (RECONCILATION_LOOPS_TO_WAIT * cfg.InformerResync).String()))
 			return nil
 		}
 	}
