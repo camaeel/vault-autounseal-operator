@@ -48,7 +48,14 @@ func TestInitialize(t *testing.T) {
 
 	vaultNode := vaultProvider.Node{Client: fakeVault[0].Client}
 
-	err := initialize(slog.Default(), ctx, &cfg, fakeSecretLister, vaultNode)
+	pod := corev1.Pod{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:              "vault-0",
+			CreationTimestamp: metav1.NewTime(time.Now().Add(-1 * time.Second)),
+		},
+	}
+
+	err := initialize(slog.Default(), ctx, &cfg, fakeSecretLister, vaultNode, &pod)
 	assert.NoError(t, err)
 
 	sealed, initialized, err := vaultNode.GetSealStatus(ctx)
@@ -66,7 +73,7 @@ func TestInitialize(t *testing.T) {
 	assert.Len(t, rootSecret.StringData, 1) //probably "feature" of fake client - check StringData instead of Data
 }
 
-func TestInitializeFailOldInitSecretExists(t *testing.T) {
+func TestInitializeFailOldInitSecretExistsAndOldPod(t *testing.T) {
 	ctx := context.TODO()
 
 	fakeVault := vaultProvider.GetVault(t, false, 3)
@@ -101,9 +108,16 @@ func TestInitializeFailOldInitSecretExists(t *testing.T) {
 
 	vaultNode := vaultProvider.Node{Client: fakeVault[0].Client}
 
-	err := initialize(slog.Default(), ctx, &cfg, fakeSecretLister, vaultNode)
+	pod := corev1.Pod{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:              "vault-0",
+			CreationTimestamp: metav1.NewTime(time.Now().Add(-1 * time.Hour)),
+		},
+	}
+
+	err := initialize(slog.Default(), ctx, &cfg, fakeSecretLister, vaultNode, &pod)
 	assert.Error(t, err)
-	assert.EqualError(t, err, fmt.Sprintf("this pod isn't initialized yet, but initialization secret vault-autounseal-unlock-keys already exists and is older than %s - either this secret is old (from previous initialization) or initialization procedure failed", (RECONCILATION_LOOPS_TO_WAIT*cfg.InformerResync).String()))
+	assert.EqualError(t, err, fmt.Sprintf("this pod isn't initialized yet and is older than %s, but initialization secret vault-autounseal-unlock-keys already exists and is older than %s - either this secret is from previously initialized vault or initialization procedure failed", (RECONCILATION_LOOPS_TO_WAIT*cfg.InformerResync).String(), (RECONCILATION_LOOPS_TO_WAIT*cfg.InformerResync).String()))
 
 	sealed, initialized, err := vaultNode.GetSealStatus(ctx)
 
@@ -147,7 +161,14 @@ func TestInitializeFailRecentInitSecretExists(t *testing.T) {
 
 	vaultNode := vaultProvider.Node{Client: fakeVault[0].Client}
 
-	err := initialize(slog.Default(), ctx, &cfg, fakeSecretLister, vaultNode)
+	pod := corev1.Pod{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:              "vault-0",
+			CreationTimestamp: metav1.NewTime(time.Now().Add(-1 * time.Hour)),
+		},
+	}
+
+	err := initialize(slog.Default(), ctx, &cfg, fakeSecretLister, vaultNode, &pod)
 	assert.NoError(t, err)
 
 	sealed, initialized, err := vaultNode.GetSealStatus(ctx)
