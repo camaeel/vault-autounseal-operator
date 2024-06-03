@@ -9,6 +9,13 @@ Operator assumes vault is deployed using official Hashicorp Vault helm chart.
 
 ## Installation 
 
+### Prerequisites
+
+Vault installed in the cluster. Important parts of the configuration:
+* if using ha mode with raft storage `retry_join` block is configured for auto joining the cluster. `.server.standalone` is set to `false` then.
+
+Example configuration (for kind cluster) can be found in `manifests/vault-values.yml`
+
 ### Installation using helm
 
 First add helm repository:
