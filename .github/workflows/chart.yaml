@@ -5,13 +5,14 @@ on:
     branches:
       - master
       - main
-      # - initial #TODO remove this
     paths:
       - "charts/**"
 
 jobs:
   helm-release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
