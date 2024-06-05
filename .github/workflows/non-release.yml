@@ -61,7 +61,7 @@ jobs:
           echo "SNAPSHOT_VERSION=${{ github.ref_name }}" >> $GITHUB_ENV
           
       - name: Run GoReleaser  
-        uses: goreleaser/goreleaser-action@v5
+        uses: goreleaser/goreleaser-action@v6
         id: gorleaser
         with:
           version: latest
