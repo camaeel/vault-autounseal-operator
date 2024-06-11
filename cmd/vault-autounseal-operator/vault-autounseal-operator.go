@@ -40,6 +40,8 @@ func main() {
 	flag.StringVar(&cfg.HandlerTimeout, "timeout", "45s", "Operator handler timeout. Default is 45s")
 	flag.StringVar(&cfg.VaultTimeout, "vault-timeout", "15s", "Vault request timeout. Default is 15s")
 
+	flag.IntVar(&cfg.Port, "port", 8080, "Http port")
+
 	flag.Parse()
 	err := cfg.InitializeAndValidate()
 	if err != nil {

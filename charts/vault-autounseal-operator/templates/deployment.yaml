@@ -50,6 +50,12 @@ spec:
           volumeMounts:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+          ports:
+            - containerPort: {{ .Values.port.number }}
+              name: {{ .Values.port.name }}
+          {{- range .Values.additionalPorts }}
+            - {{- toYaml . | nindent 14 }}
+          {{- end }}
       {{- with .Values.volumes }}
       volumes:
         {{- toYaml . | nindent 8 }}

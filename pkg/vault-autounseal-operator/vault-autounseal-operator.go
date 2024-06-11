@@ -3,6 +3,7 @@ package vaultAutounsealOperator
 import (
 	"context"
 	"fmt"
+	"github.com/camaeel/vault-autounseal-operator/pkg/health"
 	"log/slog"
 	"os"
 	"os/signal"
@@ -37,6 +38,8 @@ func Exec(ctx context.Context, cfg *config.Config) error {
 	cancelOnSigterm(cancel)
 
 	//TODO: implmenet filewatcher that will watch changes of ca.crt provided to the app
+
+	go health.Setup(ctx, cfg)
 
 	kubeclient.LeaderElection(
 		ctx,

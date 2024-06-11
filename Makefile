@@ -60,6 +60,6 @@ kind_install:
 		--wait
 
 helm_template:
-	helm template vault-autounseal-operator charts/vault-autounseal-operator -n vault
+	helm template vault-autounseal-operator charts/vault-autounseal-operator -n vault --debug
 helm_install:
 	helm upgrade --install vault-autounseal-operator charts/vault-autounseal-operator -n vault

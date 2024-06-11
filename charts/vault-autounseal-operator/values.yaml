@@ -59,14 +59,22 @@ resources: {}
   #   cpu: 100m
   #   memory: 128Mi
 #
-livenessProbe: {}
-#  httpGet:
-#    path: /
-#    port: http
-readinessProbe: {}
-#  httpGet:
-#    path: /
-#    port: http
+
+port:
+  number: 8080
+  name: observability
+additionalPorts: []
+#  - name: http
+#    containerPort: 80
+#    protocol: TCP
+livenessProbe:
+  httpGet:
+    path: /healthz
+    port: observability
+readinessProbe:
+  httpGet:
+    path: /healthz
+    port: observability
 
 # Additional volumes on the output Deployment definition.
 volumes:

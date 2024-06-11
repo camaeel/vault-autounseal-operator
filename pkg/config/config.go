@@ -42,6 +42,8 @@ type Config struct {
 
 	HandlerTimeout         string
 	HandlerTimeoutDuration time.Duration
+
+	Port int
 }
 
 func (cfg *Config) InitializeAndValidate() error {
@@ -81,6 +83,10 @@ func (cfg *Config) InitializeAndValidate() error {
 	cfg.VaultTimeoutDuration, err = time.ParseDuration(cfg.VaultTimeout)
 	if err != nil {
 		return fmt.Errorf("wrong duration for vault timeout: %v", err)
+	}
+
+	if cfg.Port < 1 || cfg.Port > 65535 {
+		return fmt.Errorf("invalid port")
 	}
 
 	return nil
