@@ -3,10 +3,10 @@ module github.com/camaeel/vault-autounseal-operator
 go 1.22
 
 require (
+	github.com/alexliesenfeld/health v0.8.0
 	github.com/google/uuid v1.6.0
 	github.com/hashicorp/vault v1.16.3
 	github.com/hashicorp/vault/api v1.14.0
-	github.com/madflojo/testcerts v1.2.0
 	github.com/stretchr/testify v1.9.0
 	golang.org/x/exp v0.0.0-20240604190554-fc45aab8b7f8
 	k8s.io/api v0.29.3
@@ -46,7 +46,6 @@ require (
 	github.com/Masterminds/sprig/v3 v3.2.3 // indirect
 	github.com/Microsoft/go-winio v0.6.1 // indirect
 	github.com/ProtonMail/go-crypto v0.0.0-20230828082145-3c4c8a2d2371 // indirect
-	github.com/alexliesenfeld/health v0.8.0 // indirect
 	github.com/aliyun/alibaba-cloud-sdk-go v1.62.676 // indirect
 	github.com/armon/go-metrics v0.4.1 // indirect
 	github.com/armon/go-radix v1.0.0 // indirect
