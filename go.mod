@@ -8,7 +8,7 @@ require (
 	github.com/hashicorp/vault v1.17.0
 	github.com/hashicorp/vault/api v1.14.0
 	github.com/stretchr/testify v1.9.0
-	golang.org/x/exp v0.0.0-20240604190554-fc45aab8b7f8
+	golang.org/x/exp v0.0.0-20240613232115-7f521ea00fb8
 	k8s.io/api v0.29.3
 	k8s.io/apimachinery v0.29.3
 	k8s.io/client-go v0.29.3
