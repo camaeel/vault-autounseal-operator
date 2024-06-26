@@ -5,7 +5,7 @@ go 1.22
 require (
 	github.com/alexliesenfeld/health v0.8.0
 	github.com/google/uuid v1.6.0
-	github.com/hashicorp/vault v1.17.0
+	github.com/hashicorp/vault v1.17.1
 	github.com/hashicorp/vault/api v1.14.0
 	github.com/stretchr/testify v1.9.0
 	golang.org/x/exp v0.0.0-20240613232115-7f521ea00fb8
