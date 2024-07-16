@@ -8,9 +8,9 @@
 
 version: 2
 gomod:
-  proxy: true
+#  proxy: true // Support using the forked repository until https://github.com/pires/go-proxyproto/pull/110 merges
   env:
-    - GOPROXY=https://proxy.golang.org,direct
+#    - GOPROXY=https://proxy.golang.org,direct // Support using the forked repository until https://github.com/pires/go-proxyproto/pull/110 merges
     - GOSUMDB=sum.golang.org
   mod: mod
 before:
