@@ -7,5 +7,8 @@
   "schedule": [
     "after 10am",
     "before 9pm"
+  ],
+  "assignees" : [
+    "camaeel"
   ]
 }
