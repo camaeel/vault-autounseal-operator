@@ -10,5 +10,8 @@
   ],
   "assignees" : [
     "camaeel"
-  ]
+  ],
+    "lockFileMaintenance": {
+    "enabled": true
+  }
 }
