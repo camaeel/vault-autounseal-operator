@@ -1,11 +1,13 @@
 module github.com/camaeel/vault-autounseal-operator
 
-go 1.22
+go 1.22.5
+
+toolchain go1.22.6
 
 require (
 	github.com/alexliesenfeld/health v0.8.0
 	github.com/google/uuid v1.6.0
-	github.com/hashicorp/vault v1.17.2
+	github.com/hashicorp/vault v1.17.3
 	github.com/hashicorp/vault/api v1.14.0
 	github.com/stretchr/testify v1.9.0
 	golang.org/x/exp v0.0.0-20240719175910-8a7402abbf56
@@ -88,7 +90,7 @@ require (
 	github.com/gammazero/deque v0.2.1 // indirect
 	github.com/gammazero/workerpool v1.1.3 // indirect
 	github.com/go-jose/go-jose/v3 v3.0.3 // indirect
-	github.com/go-jose/go-jose/v4 v4.0.2 // indirect
+	github.com/go-jose/go-jose/v4 v4.0.4 // indirect
 	github.com/go-logr/logr v1.4.2 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-ole/go-ole v1.2.6 // indirect
