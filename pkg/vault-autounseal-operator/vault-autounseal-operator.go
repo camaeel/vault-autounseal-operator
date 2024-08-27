@@ -3,11 +3,12 @@ package vaultAutounsealOperator
 import (
 	"context"
 	"fmt"
-	"github.com/camaeel/vault-autounseal-operator/pkg/health"
 	"log/slog"
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/camaeel/vault-autounseal-operator/pkg/health"
 
 	"github.com/camaeel/vault-autounseal-operator/pkg/config"
 	"github.com/camaeel/vault-autounseal-operator/pkg/providers/kubeclient"
@@ -85,7 +86,7 @@ func Exec(ctx context.Context, cfg *config.Config) error {
 
 			_, err := podInformer.AddEventHandler(podhandler.GetPodHandlerFunctions(cfg, ctx, secretLister))
 			if err != nil {
-				slog.Error("Failed to add event handler: %v", err)
+				slog.Error(fmt.Sprintf("Failed to add event handler: %v", err))
 				cancel()
 			}
 
