@@ -681,6 +681,8 @@ github.com/hashicorp/vault v1.17.3 h1:FAy5GA9bBmtQV7r6SnyeTYKEurTNOVCquWIIKrEZZm
 github.com/hashicorp/vault v1.17.3/go.mod h1:2mUJF4jjOgf8SsBs08o7hDc5eidix5/vxBxe0EoXjPY=
 github.com/hashicorp/vault v1.17.4 h1:Df0CtI9PmTJhbPd2HxoSqjhUFGRsnlhW+EhQIl9ktbs=
 github.com/hashicorp/vault v1.17.4/go.mod h1:a0xQHo0YeADV79O3NtWrsDAvfz+/OBiOJwrY9Vu9274=
+github.com/hashicorp/vault v1.17.5 h1:oA15J91tfQ+8Nqpm3oyzVkvQb1zCO9E7pTvmV85o/54=
+github.com/hashicorp/vault v1.17.5/go.mod h1:a0xQHo0YeADV79O3NtWrsDAvfz+/OBiOJwrY9Vu9274=
 github.com/hashicorp/vault-plugin-auth-alicloud v0.18.0 h1:rGQ+zHJPSIFEpWJ/AEDrOCs7zWrVWIh/JDHRlccr8CI=
 github.com/hashicorp/vault-plugin-auth-alicloud v0.18.0/go.mod h1:yTlbTm6u0wLBmS905Puz68d+SAc7MjN2D4BeELPUON8=
 github.com/hashicorp/vault-plugin-auth-azure v0.18.0 h1:jQcbAWvEP2fFbmlomA6fnIGRhW5EZqat4NYNcmZUjOY=
