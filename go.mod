@@ -5,7 +5,7 @@ go 1.23
 require (
 	github.com/alexliesenfeld/health v0.8.0
 	github.com/google/uuid v1.6.0
-	github.com/hashicorp/vault v1.17.5
+	github.com/hashicorp/vault v1.17.6
 	github.com/hashicorp/vault/api v1.15.0
 	github.com/stretchr/testify v1.9.0
 	golang.org/x/exp v0.0.0-20240909161429-701f63a606c0
@@ -206,7 +206,7 @@ require (
 	github.com/nicolai86/scaleway-sdk v1.10.2-0.20180628010248-798f60e20bb2 // indirect
 	github.com/oklog/run v1.1.0 // indirect
 	github.com/oklog/ulid v1.3.1 // indirect
-	github.com/okta/okta-sdk-golang/v2 v2.12.1 // indirect
+	github.com/okta/okta-sdk-golang/v2 v2.20.0 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.1.0-rc2.0.20221005185240-3a7f492d3f1b // indirect
 	github.com/opentracing/opentracing-go v1.2.1-0.20220228012449-10b1cf09e00b // indirect
