@@ -19,7 +19,7 @@ import (
 )
 
 func Exec(ctx context.Context, cfg *config.Config) error {
-	slog.Info(fmt.Sprintf("Staring now %s", "vault-autounseal-operator"))
+	slog.Info(fmt.Sprintf("Starting now %s", "vault-autounseal-operator"))
 
 	clientset, currentNamespace, err := kubeclient.GetClient()
 	if err != nil {
