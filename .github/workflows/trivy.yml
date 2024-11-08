@@ -18,3 +18,11 @@ jobs:
           severity: 'CRITICAL,HIGH' #report all severities
           exit-code: '1'
           format: 'table'
+        env:
+          TRIVY_DB_REPOSITORY: public.ecr.aws/aquasecurity/trivy-db,ghcr.io/aquasecurity/trivy-db
+          TRIVY_JAVA_DB_REPOSITORY: public.ecr.aws/aquasecurity/trivy-java-db,ghcr.io/aquasecurity/trivy-java-db
+          # Not 100% sure if these are required, but so far no issues.
+          TRIVY_USERNAME: ${{ github.actor }}
+          TRIVY_PASSWORD: ${{ github.token }}
+     
+     
