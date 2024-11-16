@@ -1,0 +1,127 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/kyverno/chainsaw/main/.schemas/json/test-chainsaw-v1alpha1.json
+apiVersion: chainsaw.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: unseal
+spec:
+  bindings:
+    - name: vault_chart_version
+      value: 0.28.1
+  timeouts:
+    apply: 30s
+    assert: 15s
+    cleanup: 2m
+    delete: 1m
+    error: 1m
+    exec: 1m
+  steps:
+  - name: Create vault cert
+    try:
+      - description: Create vault cert
+        script:
+          timeout: 1m
+
+          content: |
+            helm upgrade --install --namespace=$NAMESPACE vault-tls ../../charts/vault-tls --wait --timeout 1m
+          env:
+            - name: NAMESPACE
+              value: ($namespace)
+    cleanup:
+      - script:
+          timeout: 1m
+          content: |
+            helm uninstall vault-tls --namespace=$NAMESPACE --wait --timeout 30s
+
+  - name: Install vault
+    try: 
+      - description: Install vault
+        script:
+          timeout: 3m
+
+          content: |
+            helm upgrade --install --namespace=$NAMESPACE vault vault --repo=https://helm.releases.hashicorp.com/ --version=$VAULT_CHART_VERSION -f values/vault.yaml --wait --timeout 2m
+          env:
+            - name: NAMESPACE
+              value: ($namespace)
+            - name: VAULT_CHART_VERSION
+              value: ($vault_chart_version)
+      - wait:
+          apiVersion: v1
+          for:
+            jsonPath:
+              path: .status.phase
+              value: Running
+          kind: Pod
+          selector: app.kubernetes.io/instance=vault
+    cleanup:
+      - script:
+          timeout: 3m
+
+          content: |
+            helm uninstall vault --namespace=$NAMESPACE --wait --timeout 150s
+          env:
+            - name: NAMESPACE
+              value: ($namespace)
+
+  - name: Install vault-autounseal
+    try: 
+      - description: Install vault-autounseal
+        script:
+          timeout: 3m
+
+          content: |
+            helm upgrade --install --namespace=$NAMESPACE vault-autounseal-operator vault-autounseal-operator \
+              --repo=https://camaeel.github.io/vault-autounseal-operator --wait --timeout 2m \
+              --set 'args[0]=-ca-cert-path=/vault-tls/ca.crt' --set "args[1]=-namespace=${NAMESPACE}" \
+              --set "args[2]=-service-domain=vault-internal.${NAMESPACE}.svc.cluster.local"
+          env:
+            - name: NAMESPACE
+              value: ($namespace)
+      - wait:
+          apiVersion: v1
+          for:
+            jsonPath:
+              path: .status.phase
+              value: Running
+          kind: Pod
+          selector: app.kubernetes.io/instance=vault
+    cleanup:
+      - script:
+          timeout: 3m
+
+          content: |
+            helm uninstall vault-autounseal-operator --namespace=$NAMESPACE --wait --timeout 150s
+          env:
+            - name: NAMESPACE
+              value: ($namespace)
+  - name: wait for vault unsealed and ready
+    try:
+      - wait:
+          timeout: 5m
+          apiVersion: v1
+          for:
+            condition:
+              name: Ready
+          kind: Pod
+          selector: app.kubernetes.io/instance=vault
+  catch:
+    - script:
+        content: helm list
+        timeout: 1m
+    - get:
+        kind: Pod
+        apiVersion: v1
+    - get:
+        kind: Deployment
+        apiVersion: apps/v1
+    - get:
+        kind: Statefulset
+        apiVersion: apps/v1
+    - get:
+        kind: Secret
+        apiVersion: v1  
+    - events: {}
+    - podLogs:
+        timeout: 30s
+        tail: 200
+        

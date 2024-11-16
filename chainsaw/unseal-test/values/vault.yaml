@@ -1,0 +1,53 @@
+global:
+  tlsDisable: false
+  
+injector:
+  enabled: false
+
+server:
+  affinity: null
+  ha:
+    enabled: true
+    replicas: 3
+    raft:
+      enabled: true
+      setNodeId: true
+      config: |
+        ui = true
+        listener "tcp" {
+          tls_disable = 0
+          address = "[::]:8200"
+          cluster_address = "[::]:8201"
+          tls_cert_file = "/vault/userconfig/vault-tls/tls.crt"
+          tls_key_file  = "/vault/userconfig/vault-tls/tls.key"
+          tls_client_ca_file = "/vault/userconfig/vault-tls/ca.crt"
+        
+          # Enable unauthenticated metrics access (necessary for Prometheus Operator)
+          telemetry {
+            unauthenticated_metrics_access = true
+          }
+        }
+        storage "raft" {
+          path = "/vault/data"
+        
+          # configure auto join for all replicas
+          {{- range until 3 }}
+          retry_join {
+            leader_api_addr = "https://vault-{{ . }}.vault-internal:8200"
+            leader_ca_cert_file = "/vault/userconfig/vault-tls/ca.crt"
+            leader_client_cert_file = "/vault/userconfig/vault-tls/tls.crt"
+            leader_client_key_file = "/vault/userconfig/vault-tls/tls.key"
+          }
+          {{- end }}
+        }
+        telemetry {
+          prometheus_retention_time = "1h"
+          disable_hostname = true
+        }
+        disable_mlock = true
+        
+        service_registration "kubernetes" {}
+  extraVolumes:
+    - type: secret
+      name: vault-tls
+      path: /vault/userconfig/
