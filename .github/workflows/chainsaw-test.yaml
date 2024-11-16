@@ -23,6 +23,9 @@ jobs:
         run: chainsaw version
       
       - name: Check kind cluster install
-        run: kubectl version
+        run: |
+          kubectl version
+          kubectl get pods -A
+          kubectl get nodes
 
 
