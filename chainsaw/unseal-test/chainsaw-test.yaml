@@ -70,10 +70,12 @@ spec:
           timeout: 3m
 
           content: |
-            helm upgrade --install --namespace=$NAMESPACE vault-autounseal-operator vault-autounseal-operator \
-              --repo=https://camaeel.github.io/vault-autounseal-operator --wait --timeout 2m \
-              --set 'args[0]=-ca-cert-path=/vault-tls/ca.crt' --set "args[1]=-namespace=${NAMESPACE}" \
-              --set "args[2]=-service-domain=vault-internal.${NAMESPACE}.svc.cluster.local"
+            helm upgrade --install --namespace=$NAMESPACE vault-autounseal-operator ../../charts/vault-autounseal-operator \
+              --wait --timeout 2m \
+              --set 'args.ca-cert-path=/vault-tls/ca.crt' \
+              --set "args.namespace=${NAMESPACE}" \
+              --set 'resync-period=20s'
+              --set "args.service-domain=vault-internal.${NAMESPACE}.svc.cluster.local"
           env:
             - name: NAMESPACE
               value: ($namespace)
