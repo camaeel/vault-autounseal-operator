@@ -120,3 +120,6 @@ jobs:
           exit-code: '1'
           format: 'table'
 
+  chainsaw-e2e-snapshot:
+    uses: ./.github/workflows/chainsaw-test.yaml
+  

@@ -1,0 +1,24 @@
+
+# $schema: https://json.schemastore.org/github-workflow.json
+
+name: chainsaw E2E test
+on:
+  workflow_call:
+
+jobs:
+  chainsaw-e2e-tests:
+    name: Chainsaw E2E test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Chainsaw
+        uses: kyverno/action-install-chainsaw@v0.2.11
+      
+      - name: Create kind cluster
+        uses: helm/kind-action@v1
+      
+      - name: Check install
+        run: chainsaw version
+
