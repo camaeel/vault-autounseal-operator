@@ -19,6 +19,9 @@ jobs:
       - name: Create kind cluster
         uses: helm/kind-action@v1
       
+      - name: Install helm
+        uses: azure/setup-helm@v4
+
       - name: Check chainsaw install
         run: chainsaw version
       
@@ -28,5 +31,6 @@ jobs:
           kubectl wait --for=jsonpath='{.status.phase}'=Running pod --all -A --timeout 120s
           kubectl get pods -A
           kubectl get nodes
-
-
+      
+      - name: Check helm version
+        run: helm version
