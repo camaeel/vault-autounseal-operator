@@ -74,7 +74,7 @@ spec:
               --wait --timeout 2m \
               --set 'args.ca-cert-path=/vault-tls/ca.crt' \
               --set "args.namespace=${NAMESPACE}" \
-              --set 'resync-period=20s'
+              --set 'resync-period=20s' \
               --set "args.service-domain=vault-internal.${NAMESPACE}.svc.cluster.local"
           env:
             - name: NAMESPACE
