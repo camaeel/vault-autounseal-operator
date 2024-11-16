@@ -25,6 +25,7 @@ jobs:
       - name: Check kind cluster install
         run: |
           kubectl version
+          kubectl wait --for=jsonpath='{.status.phase}'=Running pod -A --timeout 120s
           kubectl get pods -A
           kubectl get nodes
 
