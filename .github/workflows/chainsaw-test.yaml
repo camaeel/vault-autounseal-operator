@@ -19,6 +19,10 @@ jobs:
       - name: Create kind cluster
         uses: helm/kind-action@v1
       
-      - name: Check install
+      - name: Check chainsaw install
         run: chainsaw version
+      
+      - name: Check kind cluster install
+        run: kubectl version
+
 
