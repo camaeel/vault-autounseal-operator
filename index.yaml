@@ -3,6 +3,16 @@ entries:
   vault-autounseal-operator:
   - apiVersion: v2
     appVersion: v0.2.8
+    created: "2024-11-17T22:27:03.493820012Z"
+    description: A Helm chart for vault-autounseal-operator
+    digest: 2e98ece8af741f836c9ffc5f06b316585b5b1fbe2e6ce19da4e2387d771cfcf4
+    name: vault-autounseal-operator
+    type: application
+    urls:
+    - https://github.com/camaeel/vault-autounseal-operator/releases/download/vault-autounseal-operator-0.3.0/vault-autounseal-operator-0.3.0.tgz
+    version: 0.3.0
+  - apiVersion: v2
+    appVersion: v0.2.8
     created: "2024-11-09T06:08:50.891927019Z"
     description: A Helm chart for vault-autounseal-operator
     digest: 36b63026ff3a1337a8ae61e5f8ada758b68d3699ab411b3405882827eee0baf0
@@ -121,4 +131,15 @@ entries:
     urls:
     - https://github.com/camaeel/vault-autounseal-operator/releases/download/vault-autounseal-operator-0.1.0/vault-autounseal-operator-0.1.0.tgz
     version: 0.1.0
-generated: "2024-11-09T06:08:50.891974759Z"
+  vault-tls:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2024-11-17T22:27:03.59293174Z"
+    description: A Helm chart for Kubernetes
+    digest: 8eaaf63b6520267f7b194c147d697d60124e19d473ba7404f0e1fab5f2520592
+    name: vault-tls
+    type: application
+    urls:
+    - https://github.com/camaeel/vault-autounseal-operator/releases/download/vault-tls-0.1.0/vault-tls-0.1.0.tgz
+    version: 0.1.0
+generated: "2024-11-17T22:27:03.593045071Z"
