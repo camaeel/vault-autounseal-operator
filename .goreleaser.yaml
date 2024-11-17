@@ -47,6 +47,8 @@ dockers:
     build_flag_templates:
     - "--pull"
     - "--platform=linux/amd64"
+    - "--cache-to=type=registry,ref={{ .Env.REGISTRY }}/{{ .Env.IMAGE_NAME }}:buildcache"
+    - "--cache-from=type=registry,ref={{ .Env.REGISTRY }}/{{ .Env.IMAGE_NAME }}:buildcache"    
     goarch: amd64
     dockerfile: Dockerfile.goreleaser
     skip_push: false
@@ -57,6 +59,8 @@ dockers:
     build_flag_templates:
     - "--pull"
     - "--platform=linux/arm64"
+    - "--cache-to=type=registry,ref={{ .Env.REGISTRY }}/{{ .Env.IMAGE_NAME }}:buildcache"
+    - "--cache-from=type=registry,ref={{ .Env.REGISTRY }}/{{ .Env.IMAGE_NAME }}:buildcache"
     goarch: arm64
     dockerfile: Dockerfile.goreleaser
     skip_push: false
