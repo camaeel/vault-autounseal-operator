@@ -119,5 +119,9 @@ jobs:
 
   chainsaw-e2e-snapshot:
     uses: ./.github/workflows/chainsaw-test.yaml
-    # needs: #TODO ucomment
-    #   - test-and-release-snapshot
+    needs: #TODO ucomment
+      - test-and-release-snapshot
+    strategy:
+      matrix:
+        IMAGE_TAG: ${{ fromJSON(needs.test-and-release-snapshot.outputs.docker_images ) }}
+  

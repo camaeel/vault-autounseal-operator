@@ -85,3 +85,11 @@ jobs:
           ignore-unfixed: true # we want to have full report
           severity: 'CRITICAL,HIGH' #report all severities
           exit-code: '1'
+
+  chainsaw-e2e-snapshot:
+    uses: ./.github/workflows/chainsaw-test.yaml
+    needs:
+      - release
+    strategy:
+      matrix:
+        IMAGE_TAG: ${{ fromJSON(needs.release.outputs.docker_images ) }}

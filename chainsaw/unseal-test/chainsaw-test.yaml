@@ -75,10 +75,13 @@ spec:
                 --set 'args.ca-cert-path=/vault-tls/ca.crt' \
                 --set "args.namespace=${NAMESPACE}" \
                 --set 'args.resync-period=20s' \
-                --set "args.service-domain=vault-internal.${NAMESPACE}.svc.cluster.local"
+                --set "args.service-domain=vault-internal.${NAMESPACE}.svc.cluster.local" \
+                --set "image.tag=$IMAGE_TAG"
             env:
               - name: NAMESPACE
                 value: ($namespace)
+              - name: IMAGE_TAG
+                value: (env('IMAGE_TAG'))
         - wait:
             apiVersion: v1
             for:
