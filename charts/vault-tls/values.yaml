@@ -1,1 +1,2 @@
-serviceName: vault-internal
+serviceNameInternal: vault-internal
+serviceName: vault

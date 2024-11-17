@@ -7,6 +7,8 @@ on:
       - main
     paths:
       - "charts/**"
+    paths-ignore: 
+      - "charts/vault-tls" #this chart is used for test setup only (for now)
 
 jobs:
   helm-release:

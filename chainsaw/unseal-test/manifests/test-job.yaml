@@ -1,0 +1,41 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: unseal-test
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - image: hashicorp/vault
+          name: unseal-vault-test
+          env: 
+            - name: VAULT_ADDR
+              value: https://vault:8200
+            - name: VAULT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  key: token
+                  name: vault-autounseal-root-token
+                  optional: false
+            - name: VAULT_CACERT
+              value: /vault-tls/ca.crt
+          command:
+            - /bin/sh
+            - -c
+          args:
+            - |
+              set -ex
+              vault secrets list
+              vault write  cubbyhole/test-secret data1=t1234
+              vault read cubbyhole/test-secret
+              vault delete cubbyhole/test-secret
+          volumeMounts:
+            - name: vault-tls
+              mountPath: /vault-tls
+              readOnly: true
+      volumes:
+        - name: vault-tls
+          secret:
+            secretName: vault-tls
+      
