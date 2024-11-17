@@ -102,5 +102,6 @@ pdb:
   maxUnavailable: 1
 
 args:
-  - -ca-cert-path=/vault-tls/ca.crt
+  ca-cert-path: /vault-tls/ca.crt
+
 

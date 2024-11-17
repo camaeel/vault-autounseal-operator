@@ -55,11 +55,10 @@ jobs:
       - name: Setup Docker buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Set SNAPSHOT_VERSION if not pull request
-        if: github.event_name != 'pull_request'
+      - name: Set SNAPSHOT_VERSION
         run: |
-          echo "SNAPSHOT_VERSION=${{ github.ref_name }}" >> $GITHUB_ENV
-          
+          echo "SNAPSHOT_VERSION=`echo ${{ github.ref_name }} | tr '/' '-'`" >> $GITHUB_ENV  
+
       - name: Run GoReleaser  
         uses: goreleaser/goreleaser-action@v6
         id: gorleaser
@@ -79,7 +78,6 @@ jobs:
           echo "docker_images=$DOCKER_IMAGES" >> "$GITHUB_OUTPUT"
 
       - name: Log into registry ${{ env.REGISTRY }}
-        if: github.event_name != 'pull_request'
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
@@ -87,7 +85,6 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Push images to registry
-        if: github.event_name != 'pull_request'
         run: |
           for image in `echo '${{ steps.docker_images.outputs.docker_images }}' | jq -r '.[]'`; do
             docker push "$image"
@@ -95,7 +92,6 @@ jobs:
 
   scan:
     name: "scan images with trivy"
-    if: github.event_name != 'pull_request'
     needs:
       - test-and-release-snapshot
     runs-on: ubuntu-latest
@@ -120,3 +116,11 @@ jobs:
           exit-code: '1'
           format: 'table'
 
+  chainsaw-e2e-snapshot:
+    uses: ./.github/workflows/chainsaw-test.yaml
+    needs: #TODO ucomment
+      - test-and-release-snapshot
+    strategy:
+      matrix:
+        IMAGE_TAG: ${{ fromJSON(needs.test-and-release-snapshot.outputs.docker_images ) }}
+  

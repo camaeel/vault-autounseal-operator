@@ -34,8 +34,12 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if .Values.args }}
           args:
-            {{ toYaml .Values.args | nindent 12}}
+          {{- range $argkey, $argval := .Values.args }}
+          - -{{ $argkey }}={{ $argval }}
+          {{- end }}
+          {{- end }}
           {{- if .Values.livenessProbe }}
           livenessProbe:
             {{- toYaml .Values.livenessProbe | nindent 12 }}

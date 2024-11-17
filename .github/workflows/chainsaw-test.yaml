@@ -1,0 +1,39 @@
+
+# $schema: https://json.schemastore.org/github-workflow.json
+
+name: chainsaw E2E test
+on:
+  workflow_call:
+
+jobs:
+  chainsaw-e2e-tests:
+    name: Chainsaw E2E test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Chainsaw
+        uses: kyverno/action-install-chainsaw@v0.2.11
+      
+      - name: Create kind cluster
+        uses: helm/kind-action@v1
+      
+      - name: Install helm
+        uses: azure/setup-helm@v4
+
+      - name: Check chainsaw install
+        run: chainsaw version
+      
+      - name: Check kind cluster install
+        run: |
+          kubectl version
+          kubectl wait --for=jsonpath='{.status.phase}'=Running pod --all -A --timeout 120s
+          kubectl get pods -A
+          kubectl get nodes
+      
+      - name: Check helm version
+        run: helm version
+
+      - name: run chainsaw
+        run: chainsaw test chainsaw/*
