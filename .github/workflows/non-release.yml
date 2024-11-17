@@ -2,7 +2,7 @@ on:
   push:
     paths-ignore:
       - 'charts/**'
-      - 'example/**'
+      - 'manifests/**'
       - 'docs/**'
       - '/*.md'
       - 'tests.rest'
@@ -10,7 +10,7 @@ on:
       - '*'
   pull_request:
     paths-ignore:
-      - 'example/**'
+      - 'manifests/**'
       - 'charts/**'
       - 'docs/**'
       - '/*.md'
