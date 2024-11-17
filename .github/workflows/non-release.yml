@@ -55,7 +55,7 @@ jobs:
       - name: Setup Docker buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Set SNAPSHOT_VERSION if not pull request
+      - name: Set SNAPSHOT_VERSION
         run: |
           echo "SNAPSHOT_VERSION=`echo ${{ github.ref_name }} | tr '/' '-'`" >> $GITHUB_ENV  
 
