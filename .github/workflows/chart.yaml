@@ -6,9 +6,7 @@ on:
       - master
       - main
     paths:
-      - "charts/**"
-    paths-ignore: 
-      - "charts/vault-tls" #this chart is used for test setup only (for now)
+      - "charts/vault-autounseal-operator"
 
 jobs:
   helm-release:
