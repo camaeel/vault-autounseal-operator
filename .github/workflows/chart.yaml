@@ -6,7 +6,7 @@ on:
       - master
       - main
     paths:
-      - "charts/vault-autounseal-operator"
+      - "charts/vault-autounseal-operator/**"
 
 jobs:
   helm-release:
