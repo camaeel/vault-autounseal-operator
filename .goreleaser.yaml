@@ -24,6 +24,7 @@ git:
   ignore_tags:
   # doesn't work
   - vault-autounseal-operator-*
+  - vault-tls-*
 
 env:
   - REGISTRY={{ if index .Env "REGISTRY"  }}{{ .Env.REGISTRY }}{{ else }}local{{ end }}
