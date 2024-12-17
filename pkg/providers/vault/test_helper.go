@@ -1,9 +1,10 @@
 package vault
 
 import (
+	"testing"
+
 	vaulthttp "github.com/hashicorp/vault/http"
 	"github.com/hashicorp/vault/vault"
-	"testing"
 )
 
 func GetVault(t *testing.T, initialize bool, cores int) []*vault.TestClusterCore {
