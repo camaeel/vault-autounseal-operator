@@ -1,6 +1,8 @@
 module github.com/camaeel/vault-autounseal-operator
 
-go 1.23
+go 1.23.0
+
+toolchain go1.24.0
 
 require (
 	github.com/alexliesenfeld/health v0.8.0
@@ -8,7 +10,7 @@ require (
 	github.com/hashicorp/vault v1.18.2
 	github.com/hashicorp/vault/api v1.16.0
 	github.com/stretchr/testify v1.10.0
-	golang.org/x/exp v0.0.0-20250210185358-939b2ce775ac
+	golang.org/x/exp v0.0.0-20250215185904-eff6e970281f
 	k8s.io/api v0.31.4
 	k8s.io/apimachinery v0.31.4
 	k8s.io/client-go v0.31.4
