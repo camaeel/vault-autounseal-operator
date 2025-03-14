@@ -33,6 +33,7 @@ jobs:
     needs:
       - trivy-scan
       - test
+      - vet
     permissions:
       contents: read
       packages: write    
