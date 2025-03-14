@@ -27,6 +27,8 @@ jobs:
     uses: ./.github/workflows/test.yml
   trivy-scan:
     uses: ./.github/workflows/trivy.yml
+  vet:
+    uses: ./.github/workflows/vet.yml
   test-and-release-snapshot:
     needs:
       - trivy-scan
