@@ -16,6 +16,9 @@ clean:
 build: generate
 	go build -o bin/vault-autounseal-operator github.com/camaeel/vault-autounseal-operator/cmd/vault-autounseal-operator
 
+vet:
+	go vet ./...
+
 docker:
 	docker buildx build -t vault-autounseal-operator:local --load .
 
