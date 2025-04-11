@@ -135,6 +135,7 @@ jobs:
       - name: Load docker images
         if: github.event_name == 'pull_request'
         run: |
+          mkdir -p images
           for image in `echo '${{ steps.docker_images.outputs.docker_images }}' | jq -r '.[]'`; do
             docker load -i "images/$(basename $image).tar"
           done
