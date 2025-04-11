@@ -88,10 +88,26 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Push images to registry
+        if: github.event_name != 'pull_request'
         run: |
           for image in `echo '${{ steps.docker_images.outputs.docker_images }}' | jq -r '.[]'`; do
             docker push "$image"
           done
+
+      - name: Save images as artifacts
+        if: github.event_name == 'pull_request'
+        run: |
+          for image in `echo '${{ steps.docker_images.outputs.docker_images }}' | jq -r '.[]'`; do
+            docker save "$image" -o "images/$(basename $image).tar"
+          done
+
+      - name: Upload docker images
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: images
+          path: images/*
+          
 
   scan:
     name: "scan images with trivy"
@@ -109,6 +125,20 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Download docker images
+        if: github.event_name == 'pull_request'
+        uses: actions/download-artifact@v4
+        with:
+          name: images
+          path: images/*
+
+      - name: Load docker images
+        if: github.event_name == 'pull_request'
+        run: |
+          for image in `echo '${{ steps.docker_images.outputs.docker_images }}' | jq -r '.[]'`; do
+            docker load -i "images/$(basename $image).tar"
+          done
+
       - name: Run Trivy vulnerability scanner in repo mode - non schedule & non master
         uses: aquasecurity/trivy-action@master
         with:
@@ -121,7 +151,7 @@ jobs:
 
   chainsaw-e2e-snapshot:
     uses: ./.github/workflows/chainsaw-test.yaml
-    needs: #TODO ucomment
+    needs:
       - test-and-release-snapshot
     strategy:
       matrix:
