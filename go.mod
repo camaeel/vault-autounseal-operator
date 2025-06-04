@@ -7,7 +7,7 @@ toolchain go1.24.3
 require (
 	github.com/alexliesenfeld/health v0.8.0
 	github.com/google/uuid v1.6.0
-	github.com/hashicorp/vault v1.19.4
+	github.com/hashicorp/vault v1.19.5
 	github.com/hashicorp/vault/api v1.20.0
 	github.com/stretchr/testify v1.10.0
 	golang.org/x/exp v0.0.0-20250531010427-b6e5de432a8b
@@ -51,7 +51,8 @@ require (
 	github.com/Masterminds/semver/v3 v3.3.1 // indirect
 	github.com/Masterminds/sprig/v3 v3.3.0 // indirect
 	github.com/Microsoft/go-winio v0.6.2 // indirect
-	github.com/ProtonMail/go-crypto v1.1.5 // indirect
+	github.com/ProtonMail/go-crypto v1.2.0 // indirect
+	github.com/ProtonMail/gopenpgp/v3 v3.2.1 // indirect
 	github.com/aliyun/alibaba-cloud-sdk-go v1.63.84 // indirect
 	github.com/armon/go-metrics v0.4.1 // indirect
 	github.com/armon/go-radix v1.0.0 // indirect
@@ -106,7 +107,7 @@ require (
 	github.com/go-ozzo/ozzo-validation v3.6.0+incompatible // indirect
 	github.com/go-sql-driver/mysql v1.8.1 // indirect
 	github.com/go-test/deep v1.1.1 // indirect
-	github.com/goccy/go-json v0.10.2 // indirect
+	github.com/goccy/go-json v0.10.4 // indirect
 	github.com/godbus/dbus v4.1.0+incompatible // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang-jwt/jwt/v4 v4.5.2 // indirect
