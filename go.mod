@@ -2,7 +2,7 @@ module github.com/camaeel/vault-autounseal-operator
 
 go 1.24.0
 
-toolchain go1.24.3
+toolchain go1.24.4
 
 require (
 	github.com/alexliesenfeld/health v0.8.0
