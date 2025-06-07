@@ -147,10 +147,6 @@ github.com/ProtonMail/go-crypto v0.0.0-20230828082145-3c4c8a2d2371 h1:kkhsdkhsCv
 github.com/ProtonMail/go-crypto v0.0.0-20230828082145-3c4c8a2d2371/go.mod h1:EjAoLdwvbIOoOQr3ihjnSoLZRtE8azugULFRteWMNc0=
 github.com/ProtonMail/go-crypto v1.1.5 h1:eoAQfK2dwL+tFSFpr7TbOaPNUbPiJj4fLYwwGE1FQO4=
 github.com/ProtonMail/go-crypto v1.1.5/go.mod h1:rA3QumHc/FZ8pAHreoekgiAbzpNsfQAosU5td4SnOrE=
-github.com/ProtonMail/go-crypto v1.2.0 h1:+PhXXn4SPGd+qk76TlEePBfOfivE0zkWFenhGhFLzWs=
-github.com/ProtonMail/go-crypto v1.2.0/go.mod h1:9whxjD8Rbs29b4XWbB8irEcE8KHMqaR2e7GWU1R+/PE=
-github.com/ProtonMail/gopenpgp/v3 v3.2.1 h1:ohRlKL5YwyIkN5kk7uBvijiMsyA57mK0yBEJg9xButU=
-github.com/ProtonMail/gopenpgp/v3 v3.2.1/go.mod h1:x7RduTo/0n/2PjTFRoEHApaxye/8PFbhoCquwfYBUGM=
 github.com/PuerkitoBio/purell v1.0.0/go.mod h1:c11w/QuzBsJSee3cPx9rAFu61PvFxuPbtSwDGJws/X0=
 github.com/PuerkitoBio/urlesc v0.0.0-20160726150825-5bd2802263f2/go.mod h1:uGdkoq3SwY9Y+13GIhn11/XLaGBb4BfwItxLd5jeuXE=
 github.com/SAP/go-hdb v1.10.1 h1:c9dGT5xHZNDwPL3NQcRpnNISn3MchwYaGoMZpCAllUs=
@@ -430,8 +426,6 @@ github.com/go-viper/mapstructure/v2 v2.1.0 h1:gHnMa2Y/pIxElCH2GlZZ1lZSsn6XMtufpG
 github.com/go-viper/mapstructure/v2 v2.1.0/go.mod h1:oJDH3BJKyqBA2TXFhDsKDGDTlndYOZ6rGS0BRZIxGhM=
 github.com/goccy/go-json v0.10.2 h1:CrxCmQqYDkv1z7lO7Wbh2HN93uovUHgrECaO5ZrCXAU=
 github.com/goccy/go-json v0.10.2/go.mod h1:6MelG93GURQebXPDq3khkgXZkazVtN9CRI+MGFi0w8I=
-github.com/goccy/go-json v0.10.4 h1:JSwxQzIqKfmFX1swYPpUThQZp/Ka4wzJdK0LWVytLPM=
-github.com/goccy/go-json v0.10.4/go.mod h1:oq7eo15ShAhp70Anwd5lgX2pLfOS3QCiwU/PULtXL6M=
 github.com/gocql/gocql v1.0.0 h1:UnbTERpP72VZ/viKE1Q1gPtmLvyTZTvuAstvSRydw/c=
 github.com/gocql/gocql v1.0.0/go.mod h1:3gM2c4D3AnkISwBxGnMMsS8Oy4y2lhbPRsH4xnJrHG8=
 github.com/godbus/dbus v4.1.0+incompatible h1:WqqLRTsQic3apZUK9qC5sGNfXthmPXzUZ7nQPrNITa4=
@@ -737,8 +731,6 @@ github.com/hashicorp/vault v1.19.3 h1:qLspaIWWqHkG4nukIhQYdTarvWg9VKdaLhaLMGwGEZ
 github.com/hashicorp/vault v1.19.3/go.mod h1:ld7UgdP9kfm1e0BD7suC4X5djlt5p25kTagiAidk5Ho=
 github.com/hashicorp/vault v1.19.4 h1:wQKoeYAOcap/n3igwtzR7TI7teqnEmizbxTgPhrwfIY=
 github.com/hashicorp/vault v1.19.4/go.mod h1:2EJNeEE5TTxlKgsDOwvatquOQSd7xCb+pADzIIpHjH0=
-github.com/hashicorp/vault v1.19.5 h1:19wLqRe9MagoARp1nqayb0erZ4TAgGG6URMA+WoB8J0=
-github.com/hashicorp/vault v1.19.5/go.mod h1:rwpCOVgY4D2r6BvqF1ptaPtlu85r1UvbKA913T8Ip4g=
 github.com/hashicorp/vault-plugin-auth-alicloud v0.20.0 h1:yw96/zWrNPFTH8yTqTvVtraJ3EWk9vewvx1H7X6lekI=
 github.com/hashicorp/vault-plugin-auth-alicloud v0.20.0/go.mod h1:aAE14G1n1/Qw5/Vj+P0eaEuo8m6op2/3RhR4gN3q5AI=
 github.com/hashicorp/vault-plugin-auth-azure v0.20.1 h1:oKbzERNhIMJvECQaouT8BKnn6kfrtA7yeI4l4pdSGcc=
