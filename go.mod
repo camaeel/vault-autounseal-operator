@@ -3,7 +3,7 @@ module github.com/camaeel/vault-autounseal-operator
 go 1.24.4
 
 require (
-	github.com/alexliesenfeld/health v0.8.0
+	github.com/alexliesenfeld/health v0.8.1
 	github.com/google/uuid v1.6.0
 	github.com/hashicorp/vault v1.19.4
 	github.com/hashicorp/vault/api v1.20.0
