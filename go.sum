@@ -146,6 +146,8 @@ github.com/alecthomas/units v0.0.0-20190717042225-c3de453c63f4/go.mod h1:ybxpYRF
 github.com/alecthomas/units v0.0.0-20190924025748-f65c72e2690d/go.mod h1:rBZYJk541a8SKzHPHnH3zbiI+7dagKZ0cgpgrD7Fyho=
 github.com/alexliesenfeld/health v0.8.0 h1:lCV0i+ZJPTbqP7LfKG7p3qZBl5VhelwUFCIVWl77fgk=
 github.com/alexliesenfeld/health v0.8.0/go.mod h1:TfNP0f+9WQVWMQRzvMUjlws4ceXKEL3WR+6Hp95HUFc=
+github.com/alexliesenfeld/health v0.8.1 h1:wdE3vt+cbJotiR8DGDBZPKHDFoJbAoWEfQTcqrmedUg=
+github.com/alexliesenfeld/health v0.8.1/go.mod h1:TfNP0f+9WQVWMQRzvMUjlws4ceXKEL3WR+6Hp95HUFc=
 github.com/aliyun/alibaba-cloud-sdk-go v1.63.84 h1:8IpC2i1mtsuUt13cbZtVCtQRSjzuMvLiDrbOJcaS+Z4=
 github.com/aliyun/alibaba-cloud-sdk-go v1.63.84/go.mod h1:SOSDHfe1kX91v3W5QiBsWSLqeLxImobbMX1mxrFHsVQ=
 github.com/apache/arrow/go/v16 v16.0.0 h1:qRLbJRPj4zaseZrjbDHa7mUoZDDIU+4pu+mE2Lucs5g=
