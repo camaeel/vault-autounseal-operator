@@ -1,6 +1,6 @@
 module github.com/camaeel/vault-autounseal-operator
 
-go 1.24.4
+go 1.24.6
 
 require (
 	github.com/alexliesenfeld/health v0.8.1
