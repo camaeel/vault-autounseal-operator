@@ -6,7 +6,7 @@ require (
 	github.com/alexliesenfeld/health v0.8.1
 	github.com/google/uuid v1.6.0
 	github.com/hashicorp/vault v1.20.4
-	github.com/hashicorp/vault/api v1.21.0
+	github.com/hashicorp/vault/api v1.22.0
 	github.com/stretchr/testify v1.11.1
 	golang.org/x/exp v0.0.0-20251002181428-27f1f14c8bb9
 	k8s.io/api v0.34.1
