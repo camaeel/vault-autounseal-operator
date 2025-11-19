@@ -5,7 +5,7 @@ go 1.25.0
 require (
 	github.com/alexliesenfeld/health v0.8.1
 	github.com/google/uuid v1.6.0
-	github.com/hashicorp/vault v1.20.4
+	github.com/hashicorp/vault v1.21.1
 	github.com/hashicorp/vault/api v1.22.0
 	github.com/stretchr/testify v1.11.1
 	golang.org/x/exp v0.0.0-20251113190631-e25ba8c21ef6
