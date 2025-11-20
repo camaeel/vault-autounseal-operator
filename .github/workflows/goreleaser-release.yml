@@ -30,7 +30,7 @@ jobs:
       docker_images: ${{ steps.docker_images.outputs.docker_images }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-tags: true
           fetch-depth: 0
