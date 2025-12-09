@@ -1,5 +1,6 @@
-ARG RELEASE_VERSION
 FROM --platform=$BUILDPLATFORM golang:1.25-alpine AS builder
+
+ARG RELEASE_VERSION
 
 # Install our build tools
 RUN apk add --update ca-certificates
