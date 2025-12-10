@@ -41,37 +41,21 @@ builds:
       - amd64
       - arm64
 
-dockers:
-  - image_templates:
-    - '{{ .Env.REGISTRY }}/{{ .Env.IMAGE_NAME }}:{{ if .IsSnapshot }}{{ .Version }}{{ else }}{{ .Tag }}{{ end }}-amd64'
-    use: buildx
-    build_flag_templates:
-    - "--pull"
-    - "--platform=linux/amd64"
-    # - "--cache-to=type=registry,ref={{ .Env.REGISTRY }}/{{ .Env.IMAGE_NAME }}:buildcache"
-    # - "--cache-from=type=registry,ref={{ .Env.REGISTRY }}/{{ .Env.IMAGE_NAME }}:buildcache"    
-    goarch: amd64
-    dockerfile: Dockerfile.goreleaser
-    skip_push: false
-
-  - image_templates:
-    - '{{ .Env.REGISTRY }}/{{ .Env.IMAGE_NAME }}:{{ if .IsSnapshot }}{{ .Version }}{{ else }}{{ .Tag }}{{ end }}-arm64'
-    use: buildx
-    build_flag_templates:
-    - "--pull"
-    - "--platform=linux/arm64"
-    # - "--cache-to=type=registry,ref={{ .Env.REGISTRY }}/{{ .Env.IMAGE_NAME }}:buildcache"
-    # - "--cache-from=type=registry,ref={{ .Env.REGISTRY }}/{{ .Env.IMAGE_NAME }}:buildcache"
-    goarch: arm64
-    dockerfile: Dockerfile.goreleaser
-    skip_push: false
-
-docker_manifests:
-  - name_template: '{{ .Env.REGISTRY }}/{{ .Env.IMAGE_NAME }}:{{ if .IsSnapshot }}{{ .Version }}{{ else }}{{ .Tag }}{{ end }}'
-    image_templates:
-    - '{{ .Env.REGISTRY }}/{{ .Env.IMAGE_NAME }}:{{ if .IsSnapshot }}{{ .Version }}{{ else }}{{ .Tag }}{{ end }}-amd64'
-    - '{{ .Env.REGISTRY }}/{{ .Env.IMAGE_NAME }}:{{ if .IsSnapshot }}{{ .Version }}{{ else }}{{ .Tag }}{{ end }}-arm64'
-    skip_push: false
+dockers_v2:
+  - dockerfile: Dockerfile.goreleaser
+    images:
+      - "{{ .Env.REGISTRY }}/{{ .Env.IMAGE_NAME }}"
+    tags:
+      - "{{ if .IsSnapshot }}{{ .Version }}{{ else }}{{ .Tag }}{{ end }}"
+    labels:
+      "org.opencontainers.image.created": "{{.Date}}"
+      "org.opencontainers.image.name": "{{.ProjectName}}"
+      "org.opencontainers.image.revision": "{{.FullCommit}}"
+      "org.opencontainers.image.version": "{{ if .IsSnapshot }}{{ .Version }}{{ else }}{{ .Tag }}{{ end }}"
+      "org.opencontainers.image.source": "{{.GitURL}}"
+    platforms:
+      - linux/amd64
+      - linux/arm64
 
 archives:
   - formats:
