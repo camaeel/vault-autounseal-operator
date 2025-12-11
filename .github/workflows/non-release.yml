@@ -62,12 +62,17 @@ jobs:
       - name: Build binary
         run: |
           GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o bin/vault-autounseal-operator-${{ matrix.goos }}-${{ matrix.goarch }} ./cmd/vault-autounseal-operator
+      - name: Generate SHA256 checksum
+        run: |
+          shasum -a 256 bin/vault-autounseal-operator-${{ matrix.goos }}-${{ matrix.goarch }} > bin/vault-autounseal-operator-${{ matrix.goos }}-${{ matrix.goarch }}.sha256
 
       - name: Upload binary
         uses: actions/upload-artifact@v4
         with:
           name: vault-autounseal-operator-${{ matrix.goos }}-${{ matrix.goarch }}
-          path: bin/vault-autounseal-operator-${{ matrix.goos }}-${{ matrix.goarch }}     
+          path: |
+            bin/vault-autounseal-operator-${{ matrix.goos }}-${{ matrix.goarch }}
+            bin/vault-autounseal-operator-${{ matrix.goos }}-${{ matrix.goarch }}.sha256
   docker-build:
     needs:
       - build
@@ -124,6 +129,8 @@ jobs:
           file: ./Dockerfile.prebuilt
           tags: ${{ steps.docker_metadata.outputs.tags }}
           platforms: linux/amd64,linux/arm64
+          # cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache
+          # cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache,mode=max
 
   scan:
     name: "scan images with trivy"
