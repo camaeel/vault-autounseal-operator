@@ -55,7 +55,7 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version-file: './go.mod'
-          cache: false #true
+          cache: true
       - name: go mod download
         run: go mod download
 
