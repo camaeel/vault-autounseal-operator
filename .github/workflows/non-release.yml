@@ -140,9 +140,6 @@ jobs:
     needs:
       - docker-build
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        docker_image: ${{ fromJSON(needs.test-and-release-snapshot.outputs.docker_images ) }}
     steps:
       - name: Log into registry ${{ env.REGISTRY }}
         uses: docker/login-action@v3
@@ -167,5 +164,6 @@ jobs:
       - docker-build
     strategy:
       matrix:
-        IMAGE_TAG: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ needs.docker-build.outputs.image_digest }}
+        vars:
+          - IMAGE_TAG: ${ REGISTRY }/${{ github.repository }}@${{ needs.docker-build.outputs.image_digest }}
   
