@@ -29,7 +29,42 @@ jobs:
     uses: ./.github/workflows/trivy.yml
   vet:
     uses: ./.github/workflows/vet.yml
-  test-and-release-snapshot:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            goos: linux
+            goarch: amd64
+          - os: ubuntu-24.04-arm
+            goos: linux
+            goarch: arm64
+          - os: macos-15-intel
+            goos: darwin
+            goarch: amd64
+          - os: macos-latest
+            goos: darwin
+            goarch: arm64
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: './go.mod'
+          cache: true
+      - name: go mod download
+        run: go mod download
+
+      - name: Build binary
+        run: |
+          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o bin/vault-autounseal-operator-${{ matrix.goos }}-${{ matrix.goarch }} ./cmd/vault-autounseal-operator
+
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: vault-autounseal-operator-${{ matrix.goos }}-${{ matrix.goarch }}
+          path: bin/vault-autounseal-operator-${{ matrix.goos }}-${{ matrix.goarch }}     
+  docker-build:
     needs:
       - trivy-scan
       - test
@@ -41,61 +76,15 @@ jobs:
     outputs:
       docker_images: ${{ steps.docker_images.outputs.docker_images }}
     steps:
-      - name: Disk space
-        run: df -h /
       - name: Checkout code
         uses: actions/checkout@v6
         with:
           fetch-tags: true
           fetch-depth: 0
-      - name: Disk space
-        run: df -h /
-      - name: Set up Go
-        uses: actions/setup-go@v6
-        with:
-          go-version-file: './go.mod'
-          cache: true
-        id: go
 
-      - name: Disk space
-        run: df -h /
-      - name: Download Go modules
-        run: go mod download
-      - name: Disk space
-        run: df -h /
-      
         # Workaround: https://github.com/docker/build-push-action/issues/461
       - name: Setup Docker buildx
         uses: docker/setup-buildx-action@v3
-
-      - name: Set SNAPSHOT_VERSION
-        run: |
-          echo "SNAPSHOT_VERSION=`echo ${{ github.ref_name }} | tr '/' '-'`" >> $GITHUB_ENV  
-
-      - name: Disk space
-        run: df -h /
-
-
-
-      - name: Build
-        run: |
-          PLATFORMS="linux/amd64 linux/arm64 darwin/amd64 darwin/arm64"
-            for PLATFORM in $PLATFORMS; do
-              echo "Building for $PLATFORM"
-              OS=$(echo $PLATFORM | cut -d'/' -f1)
-              ARCH=$(echo $PLATFORM | cut -d'/' -f2)
-              GOOS=$OS GOARCH=$ARCH go build -ldflags="-s -w" -o ./bin/vault-autounseal-operator-${GOOS}-${GOARCH} ./cmd/vault-autounseal-operator
-              echo "Platform $PLATFORM build complete"
-            done
-      # - name: Run GoReleaser  
-      #   uses: goreleaser/goreleaser-action@v6
-      #   id: gorleaser
-      #   with:
-      #     version: "~> v2"
-      #     distribution: goreleaser
-      #     args: release --clean --snapshot --verbose
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
       # - name: set docker_images
       #   id: docker_images
@@ -136,7 +125,7 @@ jobs:
   scan:
     name: "scan images with trivy"
     needs:
-      - test-and-release-snapshot
+      - docker-build
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -161,8 +150,8 @@ jobs:
 
   chainsaw-e2e-snapshot:
     uses: ./.github/workflows/chainsaw-test.yaml
-    needs: #TODO ucomment
-      - test-and-release-snapshot
+    needs: 
+      - docker-build
     strategy:
       matrix:
         IMAGE_TAG: ${{ fromJSON(needs.test-and-release-snapshot.outputs.docker_images ) }}
