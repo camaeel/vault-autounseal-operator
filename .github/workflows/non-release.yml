@@ -31,6 +31,10 @@ jobs:
     uses: ./.github/workflows/vet.yml
   build:
     runs-on: ${{ matrix.os }}
+    needs:
+      - trivy-scan
+      - test
+      - vet
     strategy:
       matrix:
         include:
