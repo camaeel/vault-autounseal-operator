@@ -8,6 +8,9 @@ on:
       - 'tests.rest'
     branches:
       - '*'
+    tags:
+      - "v*.*.*"
+      - "!vault-*"
   pull_request:
     paths-ignore:
       - 'manifests/**'
@@ -94,14 +97,6 @@ jobs:
         # Workaround: https://github.com/docker/build-push-action/issues/461
       - name: Setup Docker buildx
         uses: docker/setup-buildx-action@v3
-      
-      # - name: set docker_images
-      #   id: docker_images
-      #   run: |
-      #     set -eux
-      #     cat dist/artifacts.json
-      #     DOCKER_IMAGES=`jq -r -c '[.[] | select(.type=="Docker Image") | .name]' dist/artifacts.json`
-      #     echo "docker_images=$DOCKER_IMAGES" >> "$GITHUB_OUTPUT"
 
       - name: Log into registry ${{ env.REGISTRY }}
         uses: docker/login-action@v3
@@ -109,12 +104,6 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
-      # - name: Push images to registry
-      #   run: |
-      #     for image in `echo '${{ steps.docker_images.outputs.docker_images }}' | jq -r '.[]'`; do
-      #       docker push "$image"
-      #     done
 
       - name: Set docker metadata
         uses: docker/metadata-action@v5
