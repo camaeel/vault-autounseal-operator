@@ -5,6 +5,7 @@
 
 ### Bug Fixes
 
+* ci: remove goreleaser
 * deps ([bad48c9](https://github.com/camaeel/vault-autounseal-operator/commit/bad48c9506c490273706701ecc86e5282c72df7d))
 * **deps:** bump aws sdk ([c70178e](https://github.com/camaeel/vault-autounseal-operator/commit/c70178ea98a22f7d098db292752ede5b4ed3bfdb))
 * **deps:** bump deps ([200699b](https://github.com/camaeel/vault-autounseal-operator/commit/200699b1953ad2cade656194cee659ae6e0743b3))
