@@ -50,12 +50,12 @@ jobs:
           - os: ubuntu-24.04-arm #macos-latest
             goos: darwin
             goarch: arm64
-          - os: ubuntu-latest #macos-15-intel
-            goos: darwin
-            goarch: amd64
-          - os: ubuntu-latest #macos-latest
-            goos: darwin
-            goarch: arm64
+          # - os: ubuntu-latest #macos-15-intel
+          #   goos: darwin
+          #   goarch: amd64
+          # - os: ubuntu-latest #macos-latest
+          #   goos: darwin
+          #   goarch: arm64
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
@@ -82,7 +82,7 @@ jobs:
     permissions:
       contents: read
       packages: write    
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04-arm #ubuntu-latest
     outputs:
       docker_images: ${{ steps.docker_images.outputs.docker_images }}
     steps:
