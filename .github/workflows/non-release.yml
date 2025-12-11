@@ -78,7 +78,9 @@ jobs:
       - build
     permissions:
       contents: read
-      packages: write    
+      packages: write
+    outputs:
+      image_digest: ${{ steps.build-and-push-image.outputs.digest }}
     runs-on: ubuntu-24.04-arm #ubuntu-latest
     steps:
       - name: Checkout code
@@ -122,6 +124,7 @@ jobs:
 
 
       - name: Build and push images to registry
+        id: build-and-push-image
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -151,7 +154,7 @@ jobs:
       - name: Run Trivy vulnerability scanner in repo mode - non schedule & non master
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: ${{ matrix.docker_image }}
+          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}${{ needs.docker-build.outputs.image_digest }}
           scan-type: 'image'
           ignore-unfixed: true # we want to have full report
           severity: 'CRITICAL,HIGH' #report all severities
@@ -164,5 +167,5 @@ jobs:
       - docker-build
     strategy:
       matrix:
-        IMAGE_TAG: ${{ fromJSON(needs.test-and-release-snapshot.outputs.docker_images ) }}
+        IMAGE_TAG: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ needs.docker-build.outputs.image_digest }}
   
