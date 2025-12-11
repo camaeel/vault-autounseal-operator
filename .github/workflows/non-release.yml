@@ -81,9 +81,11 @@ jobs:
         run: |
           PLATFORMS="linux/amd64 linux/arm64 darwin/amd64 darwin/arm64"
             for PLATFORM in $PLATFORMS; do
+              echo "Building for $PLATFORM"
               OS=$(echo $PLATFORM | cut -d'/' -f1)
               ARCH=$(echo $PLATFORM | cut -d'/' -f2)
               GOOS=$OS GOARCH=$ARCH go build -ldflags="-s -w" -o ./bin/vault-autounseal-operator-${GOOS}-${GOARCH} ./cmd/vault-autounseal-operator
+              echo "Platform $PLATFORM build complete"
             done
       # - name: Run GoReleaser  
       #   uses: goreleaser/goreleaser-action@v6
