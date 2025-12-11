@@ -121,6 +121,10 @@ jobs:
         id: docker_metadata
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=sha,prefix=@
+            type=ref,event=branch,prefix=branch-,format=${{ github.ref_name }}
+            type=ref,event=tag,format=${{ github.ref_name }}
 
 
       - name: Build and push images to registry
@@ -130,7 +134,7 @@ jobs:
           context: .
           push: true
           file: ./Dockerfile.prebuilt
-          #tags: ${{ steps.docker_metadata.outputs.tags }}
+          tags: ${{ env.GITHUB_SHA }}
           platforms: linux/amd64,linux/arm64
           # cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache
           # cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache,mode=max
@@ -167,3 +171,25 @@ jobs:
         vars:
           - IMAGE_TAG: ${ REGISTRY }/${{ github.repository }}@${{ needs.docker-build.outputs.image_digest }}
   
+  release-docker:
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    needs:
+      - chainsaw-e2e-snapshot
+      - scan
+      - docker-build
+    permissions:
+      contents: read
+      packages: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: pull image from previous job
+        run: |
+          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}${{ needs.docker-build.outputs.image_digest }}
+      - name: tag image with latest and version tag
+        run: |
+          docker tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}${{ needs.docker-build.outputs.image_digest }} ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.GITHUB_REF_NAME }}
+          docker tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}${{ needs.docker-build.outputs.image_digest }} ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          
+      - name: tag image
+        run: |
+          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.GITHUB_REF_NAME }} ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
