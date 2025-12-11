@@ -130,7 +130,7 @@ jobs:
           context: .
           push: true
           file: ./Dockerfile.prebuilt
-          tags: ${{ steps.docker_metadata.outputs.tags }}
+          #tags: ${{ steps.docker_metadata.outputs.tags }}
           platforms: linux/amd64,linux/arm64
           # cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache
           # cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache,mode=max
