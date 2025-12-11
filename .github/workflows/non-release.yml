@@ -37,7 +37,7 @@ jobs:
     permissions:
       contents: read
       packages: write    
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     outputs:
       docker_images: ${{ steps.docker_images.outputs.docker_images }}
     steps:
