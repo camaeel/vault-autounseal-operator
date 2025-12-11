@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.2.17](https://github.com/camaeel/vault-autounseal-operator/compare/v0.2.16...v0.2.17) (2025-12-11)
+
+
+### Bug Fixes
+
+* deps ([bad48c9](https://github.com/camaeel/vault-autounseal-operator/commit/bad48c9506c490273706701ecc86e5282c72df7d))
+* **deps:** bump aws sdk ([c70178e](https://github.com/camaeel/vault-autounseal-operator/commit/c70178ea98a22f7d098db292752ede5b4ed3bfdb))
+* **deps:** bump deps ([200699b](https://github.com/camaeel/vault-autounseal-operator/commit/200699b1953ad2cade656194cee659ae6e0743b3))
+* **deps:** update golang.org/x/exp digest to 8475f28 ([#111](https://github.com/camaeel/vault-autounseal-operator/issues/111)) ([b891648](https://github.com/camaeel/vault-autounseal-operator/commit/b8916484b9ac0bf30e26a6da8b115e116df0de2d))
+* **deps:** update golang.org/x/exp digest to 87e1e73 ([#109](https://github.com/camaeel/vault-autounseal-operator/issues/109)) ([b69b152](https://github.com/camaeel/vault-autounseal-operator/commit/b69b15288377c7aa48350691595bd9150c454f7a))
+* **deps:** update golang.org/x/exp digest to 90e834f ([#102](https://github.com/camaeel/vault-autounseal-operator/issues/102)) ([c10a0d9](https://github.com/camaeel/vault-autounseal-operator/commit/c10a0d998ff7c286529ef7fcb87cbc9598acce3e))
+* **deps:** update golang.org/x/exp digest to a4bb9ff ([#105](https://github.com/camaeel/vault-autounseal-operator/issues/105)) ([708f6a9](https://github.com/camaeel/vault-autounseal-operator/commit/708f6a984e8da850054a3ca6a84ef11aebcea220))
+* **deps:** update golang.org/x/exp digest to e25ba8c ([#107](https://github.com/camaeel/vault-autounseal-operator/issues/107)) ([073eb81](https://github.com/camaeel/vault-autounseal-operator/commit/073eb815f8f2c450012d0a0e08b7b977cff6ac31))
+* **deps:** update kubernetes packages to v0.34.2 ([#106](https://github.com/camaeel/vault-autounseal-operator/issues/106)) ([7d4e74c](https://github.com/camaeel/vault-autounseal-operator/commit/7d4e74ce44ccaa02755c2fe5dd0321a755f02d93))
+* dockerfile ([2bdaed4](https://github.com/camaeel/vault-autounseal-operator/commit/2bdaed42eedbeb045f0486b6e38e3ac16df5b94a))
+* optimize dockerfile ([323c989](https://github.com/camaeel/vault-autounseal-operator/commit/323c989e1b0b64fc5e93afc82bc93cb4c7a6b671))
+
 ## [0.2.16](https://github.com/camaeel/vault-autounseal-operator/compare/v0.2.15...v0.2.16) (2025-10-09)
 
 
