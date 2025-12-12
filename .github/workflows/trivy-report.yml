@@ -1,4 +1,4 @@
-name: build
+name: trivy-report
 on:
   push:
     branches:
