@@ -160,7 +160,7 @@ jobs:
     strategy:
       matrix:
         vars:
-          - IMAGE_TAG: ${ REGISTRY }/${{ github.repository }}@${{ needs.docker-build.outputs.image_digest }}
+          - IMAGE_TAG: ${{ github.sha }}@${{ needs.docker-build.outputs.image_digest }}
   
   release-docker:
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
