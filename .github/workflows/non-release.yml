@@ -70,7 +70,7 @@ jobs:
           shasum -a 256 bin/vault-autounseal-operator-${{ matrix.goos }}-${{ matrix.goarch }} > bin/vault-autounseal-operator-${{ matrix.goos }}-${{ matrix.goarch }}.sha256
 
       - name: Upload binary
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: vault-autounseal-operator-${{ matrix.goos }}-${{ matrix.goarch }}
           path: |
@@ -90,7 +90,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Download built binaries
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           path: ./artifacts
 
@@ -207,7 +207,7 @@ jobs:
       packages: write
     steps:
       - name: Download built binaries
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           path: ./artifacts
       - name: Upload binaries to GitHub Release
