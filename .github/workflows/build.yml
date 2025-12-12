@@ -212,11 +212,14 @@ jobs:
           merge_multiple: true
           pattern: 'vault-autounseal-operator-*'
 
+      - name: debug files
+        run: find ./artifacts 
+
       - name: Upload binaries to GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            ./artifacts/vault-autounseal-operator-*
+            ./artifacts/*
           append_body: true
           body: |
             Container image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.ref_name }}
