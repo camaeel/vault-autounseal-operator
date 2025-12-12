@@ -10,7 +10,8 @@ ARG TARGETARCH
 COPY --from=certs /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=certs /etc_passwd /etc/passwd
 
+COPY --chmod=0755 artifacts/vault-autounseal-operator-${TARGETOS}-${TARGETARCH} /vault-autounseal-operator
+
 USER nonroot
 
-COPY artifacts/vault-autounseal-operator-${TARGETOS}-${TARGETARCH} /vault-autounseal-operator
 ENTRYPOINT ["/vault-autounseal-operator"]
