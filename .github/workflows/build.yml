@@ -68,7 +68,7 @@ jobs:
       - name: Generate SHA256 checksum
         working-directory: ${{ github.workspace }}/bin
         run: |
-          shasum -a 256 vault-autounseal-operator-${{ matrix.goos }}-${{ matrix.goarch }} > bin/vault-autounseal-operator-${{ matrix.goos }}-${{ matrix.goarch }}.sha256
+          shasum -a 256 vault-autounseal-operator-${{ matrix.goos }}-${{ matrix.goarch }} > vault-autounseal-operator-${{ matrix.goos }}-${{ matrix.goarch }}.sha256
 
       - name: Upload binary
         uses: actions/upload-artifact@v6
