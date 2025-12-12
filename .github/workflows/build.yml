@@ -96,6 +96,12 @@ jobs:
           path: ./artifacts
           merge-multiple: true
 
+      - name: list files
+        run: ls -la ./artifacts
+
+      - name: find files
+        run: find ./artifacts
+
       - name: Setup Docker buildx
         uses: docker/setup-buildx-action@v3
 
