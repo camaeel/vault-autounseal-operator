@@ -209,7 +209,7 @@ jobs:
         uses: actions/download-artifact@v7
         with:
           path: ./artifacts
-          merge_multiple: true
+          merge-multiple: true
           pattern: 'vault-autounseal-operator-*'
 
       - name: debug files
@@ -222,6 +222,9 @@ jobs:
             ./artifacts/*
           append_body: true
           body: |
+            
+            # Container image for release {{ github.ref_name }}:
+
             Container image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.ref_name }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
