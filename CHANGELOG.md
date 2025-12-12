@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.18](https://github.com/camaeel/vault-autounseal-operator/compare/v0.2.17...v0.2.18) (2025-12-12)
+
+
+### Bug Fixes
+
+* trigger release please ([e4435a3](https://github.com/camaeel/vault-autounseal-operator/commit/e4435a3b0eafdfed58758497d05d883bf88f79b8))
+
 ## [0.2.17](https://github.com/camaeel/vault-autounseal-operator/compare/v0.2.16...v0.2.17) (2025-12-11)
 
 
