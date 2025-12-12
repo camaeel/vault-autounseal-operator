@@ -204,16 +204,21 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      packages: write
     steps:
       - name: Download built binaries
         uses: actions/download-artifact@v6
         with:
           path: ./artifacts
+          merge_multiple: true
+          pattern: 'vault-autounseal-operator-*'
+
       - name: Upload binaries to GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           files: |
             ./artifacts/vault-autounseal-operator-*
+          append_body: true
+          body: |
+            Container image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.ref_name }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
