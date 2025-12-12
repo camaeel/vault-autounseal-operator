@@ -97,7 +97,7 @@ jobs:
           merge-multiple: true
 
       - name: add execute permissions
-        run: chmod +x ./artifacts/vault-autounseal-operator-*
+        run: chmod a+x ./artifacts/vault-autounseal-operator-*
         
       - name: Setup Docker buildx
         uses: docker/setup-buildx-action@v3
