@@ -194,3 +194,26 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/v') && !contains(github.ref, '-')
         run: |
           docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+
+  release-github:
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    needs:
+      - chainsaw-e2e-snapshot
+      - scan
+      - build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+    steps:
+      - name: Download built binaries
+        uses: actions/download-artifact@v6
+        with:
+          path: ./artifacts
+      - name: Upload binaries to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            ./artifacts/vault-autounseal-operator-*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
