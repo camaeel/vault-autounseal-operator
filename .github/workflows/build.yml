@@ -66,8 +66,9 @@ jobs:
         run: |
           GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o bin/vault-autounseal-operator-${{ matrix.goos }}-${{ matrix.goarch }} ./cmd/vault-autounseal-operator
       - name: Generate SHA256 checksum
+        working-directory: ${{ github.workspace }}/bin
         run: |
-          shasum -a 256 bin/vault-autounseal-operator-${{ matrix.goos }}-${{ matrix.goarch }} > bin/vault-autounseal-operator-${{ matrix.goos }}-${{ matrix.goarch }}.sha256
+          shasum -a 256 vault-autounseal-operator-${{ matrix.goos }}-${{ matrix.goarch }} > bin/vault-autounseal-operator-${{ matrix.goos }}-${{ matrix.goarch }}.sha256
 
       - name: Upload binary
         uses: actions/upload-artifact@v6
@@ -212,9 +213,6 @@ jobs:
           merge-multiple: true
           pattern: 'vault-autounseal-operator-*'
 
-      - name: debug files
-        run: find ./artifacts 
-
       - name: Upload binaries to GitHub Release
         uses: softprops/action-gh-release@v2
         with:
@@ -223,7 +221,7 @@ jobs:
           append_body: true
           body: |
             
-            # Container image for release {{ github.ref_name }}:
+            ## Container image for release ${{ github.ref_name }}:
 
             Container image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.ref_name }}
         env:
