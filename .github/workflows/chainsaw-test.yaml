@@ -16,6 +16,10 @@ jobs:
     env:
       IMAGE_TAG: ${{ inputs.image_tag }}
     steps:
+      - name: Print IMAGE_TAG
+        run: |
+          echo "Testing for IMAGE_TAG: $IMAGE_TAG"
+
       - name: Checkout code
         uses: actions/checkout@v6
 
