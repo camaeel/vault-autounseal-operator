@@ -5,12 +5,14 @@ RUN apk add --update ca-certificates
 RUN echo "nonroot:x:1337:1337:nonroot:/nonroot:/usr/sbin/nologin" > /etc_passwd
 
 FROM --platform=$BUILDPLATFORM scratch
+
 ARG TARGETOS
 ARG TARGETARCH
 COPY --from=certs /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=certs /etc_passwd /etc/passwd
 
+COPY --chmod=0755 artifacts/vault-autounseal-operator-${TARGETOS}-${TARGETARCH} /vault-autounseal-operator
+
 USER nonroot
 
-COPY artifacts/vault-autounseal-operator-${TARGETOS}-${TARGETARCH} /vault-autounseal-operator
 ENTRYPOINT ["/vault-autounseal-operator"]
