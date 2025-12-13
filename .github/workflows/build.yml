@@ -185,16 +185,11 @@ jobs:
       - name: tag image with latest and version tag
         run: |
           docker buildx imagetools create --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.ref_name }} ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ needs.docker-build.outputs.image_digest }} 
-          docker buildx imagetools create --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ needs.docker-build.outputs.image_digest }} 
           
-      - name: push image
-        run: |
-          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.ref_name }}
-          # docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
       - name: Push latest tag only for stable semver
         if: startsWith(github.ref, 'refs/tags/v') && !contains(github.ref, '-')
         run: |
-          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          docker buildx imagetools create --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ needs.docker-build.outputs.image_digest }} 
 
   release-github:
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
