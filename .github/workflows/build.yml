@@ -156,10 +156,8 @@ jobs:
     uses: ./.github/workflows/chainsaw-test.yaml
     needs: 
       - docker-build
-    strategy:
-      matrix:
-        vars:
-          - IMAGE_TAG: ${{ github.sha }}@${{ needs.docker-build.outputs.image_digest }}
+    with:
+      image_tag: ${{ github.sha }}@${{ needs.docker-build.outputs.image_digest }}
   
   release-docker:
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')

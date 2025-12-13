@@ -4,12 +4,22 @@
 name: chainsaw E2E test
 on:
   workflow_call:
+    inputs:
+      image_tag:
+        required: true
+        type: string
 
 jobs:
   chainsaw-e2e-tests:
     name: Chainsaw E2E test
     runs-on: ubuntu-latest
+    env:
+      IMAGE_TAG: ${{ inputs.image_tag }}
     steps:
+      - name: Print IMAGE_TAG
+        run: |
+          echo "Testing for IMAGE_TAG: $IMAGE_TAG"
+
       - name: Checkout code
         uses: actions/checkout@v6
 
