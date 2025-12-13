@@ -83,6 +83,7 @@ jobs:
     permissions:
       contents: read
       packages: write
+      id-token: write # needed for signing the images with GitHub OIDC Token
     outputs:
       image_digest: ${{ steps.build-and-push-image.outputs.digest }}
     runs-on: ubuntu-24.04-arm #ubuntu-latest
