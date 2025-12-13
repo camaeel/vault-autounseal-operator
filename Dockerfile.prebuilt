@@ -4,7 +4,6 @@ FROM --platform=$BUILDPLATFORM alpine AS certs
 RUN apk add --update ca-certificates
 RUN echo "nonroot:x:1337:1337:nonroot:/nonroot:/usr/sbin/nologin" > /etc_passwd
 
-# FROM --platform=$BUILDPLATFORM alpine 
 FROM --platform=$BUILDPLATFORM scratch
 
 ARG TARGETOS
@@ -14,6 +13,6 @@ COPY --from=certs /etc_passwd /etc/passwd
 
 COPY --chmod=0755 artifacts/vault-autounseal-operator-${TARGETOS}-${TARGETARCH} /vault-autounseal-operator
 
-#USER nonroot
+USER nonroot
 
 ENTRYPOINT ["/vault-autounseal-operator"]
