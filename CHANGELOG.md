@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.2.24-beta1](https://github.com/camaeel/vault-autounseal-operator/compare/v0.2.23-beta1...v0.2.24-beta1) (2025-12-13)
+## [0.2.23](https://github.com/camaeel/vault-autounseal-operator/compare/v0.2.22...v0.2.23) (2025-12-13)
 
 
 ### Bug Fixes
