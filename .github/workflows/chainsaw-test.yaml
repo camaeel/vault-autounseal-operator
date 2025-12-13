@@ -4,6 +4,10 @@
 name: chainsaw E2E test
 on:
   workflow_call:
+    inputs:
+      image_tag:
+        required: true
+        type: string
 
 jobs:
   chainsaw-e2e-tests:
