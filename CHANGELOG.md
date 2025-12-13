@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.2.22](https://github.com/camaeel/vault-autounseal-operator/compare/v0.2.21...v0.2.22) (2025-12-13)
+
+
+### Bug Fixes
+
+* build image properly ([75df2f6](https://github.com/camaeel/vault-autounseal-operator/commit/75df2f652c4f6c2ecadd7d1b1bd5708fd2729e71))
+* ci image tag ([7149aa7](https://github.com/camaeel/vault-autounseal-operator/commit/7149aa7892fdb4f6f7c9507be0c5a682e715b18c))
+* image build was not working ([d55c7d6](https://github.com/camaeel/vault-autounseal-operator/commit/d55c7d6c4e597155babccc5878703855f034636a))
+* revert image to working one ([ac55e2c](https://github.com/camaeel/vault-autounseal-operator/commit/ac55e2c2eba1febf30c671cd95e642ceb8688648))
+* shasum ([00853fb](https://github.com/camaeel/vault-autounseal-operator/commit/00853fb1b94b97ace4056d096e12d1ebe413150b))
+
 ## [0.2.21](https://github.com/camaeel/vault-autounseal-operator/compare/v0.2.20...v0.2.21) (2025-12-12)
 
 
