@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.24-beta1](https://github.com/camaeel/vault-autounseal-operator/compare/v0.2.23-beta1...v0.2.24-beta1) (2025-12-13)
+
+
+### Bug Fixes
+
+* image tagging ([75e4341](https://github.com/camaeel/vault-autounseal-operator/commit/75e434126ecab4dc2b2725ab597c1538a0178adc))
+* image tagging ([4683d11](https://github.com/camaeel/vault-autounseal-operator/commit/4683d115800b6b7c76caacc0c6ada91f1b24714c))
+
 ## [0.2.22](https://github.com/camaeel/vault-autounseal-operator/compare/v0.2.21...v0.2.22) (2025-12-13)
 
 
