@@ -100,7 +100,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Install Cosign
-        uses: sigstore/cosign-installer@v4
+        uses: sigstore/cosign-installer@v4.0.0
       
       - name: Check cosign install
         run: cosign version
