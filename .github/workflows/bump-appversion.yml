@@ -25,11 +25,6 @@ jobs:
           git checkout master
           git pull origin master
 
-      - name: Create branch for chart update
-        run: |
-          BRANCH_NAME="bump-chart-${{ github.ref_name }}"
-          git checkout -b ${BRANCH_NAME}
-
       - name: Get current chart version and bump patch
         id: bump_chart_version
         run: |
@@ -44,20 +39,9 @@ jobs:
           sed -i "s/^version: .*/version: ${NEW_VERSION}/" charts/vault-autounseal-operator/Chart.yaml
 
 
-      - name: Update appVersion and version in Chart.yaml
+      - name: Update appVersion in Chart.yaml
         run: |
           sed -i "s/^appVersion: .*/appVersion: \"${{ github.ref_name }}\"/" charts/vault-autounseal-operator/Chart.yaml
-
-      - name: Commit and push changes
-        run: |
-          git add charts/vault-autounseal-operator/Chart.yaml
-          if git diff --staged --quiet; then
-            echo "No changes to commit"
-          else
-            BRANCH_NAME="bump-chart-${{ github.ref_name }}"
-            git commit -m "chore: bump chart version [skip ci]"
-            git push origin ${BRANCH_NAME}
-          fi
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v8
@@ -73,3 +57,4 @@ jobs:
           base: master
           delete-branch: true
           assignees: ${{ github.repository_owner }}
+          commit-message: "chore: bump chart version for ${{ github.ref_name }}"
