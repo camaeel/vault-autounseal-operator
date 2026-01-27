@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.29](https://github.com/camaeel/vault-autounseal-operator/compare/v0.2.28...v0.2.29) (2026-01-27)
+
+
+### Bug Fixes
+
+* **ci:** auto bump helm chart ([fe768bd](https://github.com/camaeel/vault-autounseal-operator/commit/fe768bd514474c011b12e36458d84d2bac5c0bff))
+
 ## [0.2.28](https://github.com/camaeel/vault-autounseal-operator/compare/v0.2.27...v0.2.28) (2026-01-27)
 
 
