@@ -25,6 +25,11 @@ jobs:
           git checkout master
           git pull origin master
 
+      - name: Create branch for chart update
+        run: |
+          BRANCH_NAME="bump-chart-${{ github.ref_name }}"
+          git checkout -b ${BRANCH_NAME}
+
       - name: Get current chart version and bump patch
         id: bump_chart_version
         run: |
@@ -49,6 +54,22 @@ jobs:
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "chore: bump chart version"
-            git push origin master
+            BRANCH_NAME="bump-chart-${{ github.ref_name }}"
+            git commit -m "chore: bump chart version [skip ci]"
+            git push origin ${BRANCH_NAME}
           fi
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: bump-chart-${{ github.ref_name }}
+          title: "chore: bump chart version for ${{ github.ref_name }}"
+          body: |
+            Automated chart version bump after release ${{ github.ref_name }}
+            
+            - Updated chart version
+            - Updated appVersion to ${{ github.ref_name }}
+          base: master
+          delete-branch: true
+          assignees: ${{ github.repository_owner }}
