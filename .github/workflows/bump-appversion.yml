@@ -1,12 +1,10 @@
 name: Bump Helm appVersion after Release
 
 on:
-  release:
-    types: [created]
+  workflow_call:
 
 jobs:
   bump-helm-app-version:
-    if: github.event.release.prerelease == false
     runs-on: ubuntu-latest
     permissions:
       contents: write
