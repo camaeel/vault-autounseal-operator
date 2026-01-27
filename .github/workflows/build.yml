@@ -204,6 +204,8 @@ jobs:
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') && !contains(github.ref, '-')
     needs:
       - release-docker
+    permissions:
+      contents: write
     uses: ./.github/workflows/bump-appversion.yml
 
   release-github:
