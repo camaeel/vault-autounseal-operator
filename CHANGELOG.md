@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.27](https://github.com/camaeel/vault-autounseal-operator/compare/v0.2.26...v0.2.27) (2026-01-27)
+
+
+### Bug Fixes
+
+* bump chart version after docker images are built ([7e83487](https://github.com/camaeel/vault-autounseal-operator/commit/7e834879b573a6f8558083e87b6b2916a1358ac1))
+* missing permissions ([bab64b3](https://github.com/camaeel/vault-autounseal-operator/commit/bab64b3666f69066c729be1458fe90641cd215e8))
+
 ## [0.2.26](https://github.com/camaeel/vault-autounseal-operator/compare/v0.2.25...v0.2.26) (2026-01-27)
 
 
