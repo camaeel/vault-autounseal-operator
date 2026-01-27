@@ -206,6 +206,7 @@ jobs:
       - release-docker
     permissions:
       contents: write
+      pull-requests: write
     uses: ./.github/workflows/bump-appversion.yml
 
   release-github:
