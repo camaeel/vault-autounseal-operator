@@ -8,6 +8,8 @@ jobs:
   bump-helm-app-version:
     if: github.event.release.prerelease == false
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
