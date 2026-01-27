@@ -51,6 +51,6 @@ jobs:
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "chore: bump chart version [skip ci]"
+            git commit -m "chore: bump chart version"
             git push origin master
           fi
