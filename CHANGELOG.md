@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.30](https://github.com/camaeel/vault-autounseal-operator/compare/v0.2.29...v0.2.30) (2026-01-27)
+
+
+### Bug Fixes
+
+* **ci:** lack of permissions ([23fed40](https://github.com/camaeel/vault-autounseal-operator/commit/23fed40d8a63a0fb9efdce503ac91d03291f16cb))
+
 ## [0.2.29](https://github.com/camaeel/vault-autounseal-operator/compare/v0.2.28...v0.2.29) (2026-01-27)
 
 
