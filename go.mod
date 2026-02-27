@@ -5,7 +5,7 @@ go 1.26
 require (
 	github.com/alexliesenfeld/health v0.8.1
 	github.com/google/uuid v1.6.0
-	github.com/hashicorp/vault v1.21.2
+	github.com/hashicorp/vault v1.21.3
 	github.com/hashicorp/vault/api v1.22.0
 	github.com/stretchr/testify v1.11.1
 	golang.org/x/exp v0.0.0-20260211191109-2735e65f0518
@@ -191,7 +191,7 @@ require (
 	github.com/hashicorp/raft-snapshot v1.0.4 // indirect
 	github.com/hashicorp/raft-wal v0.4.0 // indirect
 	github.com/hashicorp/vault-plugin-secrets-kv v0.25.0 // indirect
-	github.com/hashicorp/vault/sdk v0.20.0 // indirect
+	github.com/hashicorp/vault/sdk v0.21.0 // indirect
 	github.com/hashicorp/vic v1.5.1-0.20190403131502-bbfe86ec9443 // indirect
 	github.com/hashicorp/yamux v0.1.2 // indirect
 	github.com/huandu/xstrings v1.5.0 // indirect
