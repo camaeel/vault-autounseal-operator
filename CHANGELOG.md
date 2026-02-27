@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.33](https://github.com/camaeel/vault-autounseal-operator/compare/v0.2.32...v0.2.33) (2026-02-27)
+
+
+### Bug Fixes
+
+* **deps:** update kubernetes packages to v0.35.2 ([#135](https://github.com/camaeel/vault-autounseal-operator/issues/135)) ([4329133](https://github.com/camaeel/vault-autounseal-operator/commit/432913394de5f5a0fa3e7e918aa43252bbc8f41e))
+
 ## [0.2.32](https://github.com/camaeel/vault-autounseal-operator/compare/v0.2.31...v0.2.32) (2026-02-11)
 
 
