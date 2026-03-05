@@ -114,7 +114,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set docker metadata
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         id: docker_metadata
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
