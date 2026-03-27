@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.2.35](https://github.com/camaeel/vault-autounseal-operator/compare/v0.2.34...v0.2.35) (2026-03-27)
+
+
+### Bug Fixes
+
+* bump deps ([2ea5964](https://github.com/camaeel/vault-autounseal-operator/commit/2ea596464358368c83cae0762c6e3a5f4148d999))
+* **deps:** update golang.org/x/exp digest to 7ab1446 ([#170](https://github.com/camaeel/vault-autounseal-operator/issues/170)) ([18ad87f](https://github.com/camaeel/vault-autounseal-operator/commit/18ad87f7f073c7eb818cb92b8334ad0608e81b99))
+* **deps:** update kubernetes monorepo to v0.35.3 ([#172](https://github.com/camaeel/vault-autounseal-operator/issues/172)) ([9a1a0c4](https://github.com/camaeel/vault-autounseal-operator/commit/9a1a0c4560f0fa3419852b493764ddd9ba0d4fb0))
+
 ## [0.2.34](https://github.com/camaeel/vault-autounseal-operator/compare/v0.2.33...v0.2.34) (2026-03-05)
 
 
