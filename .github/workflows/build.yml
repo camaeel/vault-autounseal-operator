@@ -54,7 +54,7 @@ jobs:
             goos: darwin
             goarch: arm64
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: actions/setup-go@v6
         with:
           go-version-file: './go.mod'
@@ -89,7 +89,7 @@ jobs:
     runs-on: ubuntu-24.04-arm #ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Download built binaries
         uses: actions/download-artifact@v8
