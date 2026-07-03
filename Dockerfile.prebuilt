@@ -4,7 +4,7 @@ FROM --platform=$BUILDPLATFORM alpine AS certs
 RUN apk add --update ca-certificates
 RUN echo "nonroot:x:1337:1337:nonroot:/nonroot:/usr/sbin/nologin" > /etc_passwd
 
-FROM --platform=$BUILDPLATFORM scratch
+FROM scratch
 
 ARG TARGETOS
 ARG TARGETARCH
