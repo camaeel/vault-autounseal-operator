@@ -12,6 +12,7 @@ jobs:
 
       - name: Run Trivy vulnerability scanner in repo mode - non schedule & non master
         uses: aquasecurity/trivy-action@master
+        continue-on-error: ${{ inputs.allow_failure }}
         with:
           scan-type: 'fs'
           ignore-unfixed: true # we want to have full report
