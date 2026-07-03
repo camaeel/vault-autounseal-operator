@@ -5,6 +5,22 @@
 
 ### Bug Fixes
 
+* deps ([d917e80](https://github.com/camaeel/vault-autounseal-operator/commit/d917e801e9ba7854ab4206c92aa2dd494a6d2601))
+* deps ([7433e8b](https://github.com/camaeel/vault-autounseal-operator/commit/7433e8b2c88bbeac26053156fb897bc2097e993b))
+* **deps:** bump deps ([c7a1e32](https://github.com/camaeel/vault-autounseal-operator/commit/c7a1e328cb0600abaee1e7d88a05ea61baed2ccd))
+* **deps:** bump vault/api ([3de0198](https://github.com/camaeel/vault-autounseal-operator/commit/3de0198f33893720c550f29e8cc9f413f58f691e))
+* **deps:** mongo driver & go version ([e41113e](https://github.com/camaeel/vault-autounseal-operator/commit/e41113e85c6d43da518b4b387a302f04e523f477))
+* **deps:** update golang.org/x/exp digest to 746e56f ([#178](https://github.com/camaeel/vault-autounseal-operator/issues/178)) ([bb63e05](https://github.com/camaeel/vault-autounseal-operator/commit/bb63e053a1674023fbe436ae0da5fa6f516468a4))
+* **deps:** update golang.org/x/exp digest to c761662 ([#186](https://github.com/camaeel/vault-autounseal-operator/issues/186)) ([6db273f](https://github.com/camaeel/vault-autounseal-operator/commit/6db273fa28d5127b943e8be9b95e12f9f0c69ee0))
+* **deps:** update kubernetes monorepo to v0.35.4 ([#181](https://github.com/camaeel/vault-autounseal-operator/issues/181)) ([24843b5](https://github.com/camaeel/vault-autounseal-operator/commit/24843b53db6bba7c460006ee1d77bd1f47897fa9))
+* **deps:** update kubernetes monorepo to v0.36.2 ([#183](https://github.com/camaeel/vault-autounseal-operator/issues/183)) ([356793c](https://github.com/camaeel/vault-autounseal-operator/commit/356793cd0a9e59c467b309575916432a7161a0ca))
+* remove buildplatfom from target image ([755d939](https://github.com/camaeel/vault-autounseal-operator/commit/755d93900473cfed2067c57eb9101d3e675f74c2))
+
+## [0.2.36](https://github.com/camaeel/vault-autounseal-operator/compare/v0.2.35...v0.2.36) (2026-07-03)
+
+
+### Bug Fixes
+
 * deps ([7433e8b](https://github.com/camaeel/vault-autounseal-operator/commit/7433e8b2c88bbeac26053156fb897bc2097e993b))
 * **deps:** bump deps ([c7a1e32](https://github.com/camaeel/vault-autounseal-operator/commit/c7a1e328cb0600abaee1e7d88a05ea61baed2ccd))
 * **deps:** bump vault/api ([3de0198](https://github.com/camaeel/vault-autounseal-operator/commit/3de0198f33893720c550f29e8cc9f413f58f691e))
