@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.2.38](https://github.com/camaeel/vault-autounseal-operator/compare/v0.2.37...v0.2.38) (2026-08-13)
+
+
+### Bug Fixes
+
+* **deps:** update golang.org/x/exp digest to 3d80eb7 ([#196](https://github.com/camaeel/vault-autounseal-operator/issues/196)) ([c595573](https://github.com/camaeel/vault-autounseal-operator/commit/c59557362f4c6dde0655046b10ace389a2bf01b0))
+* **deps:** update golang.org/x/exp digest to 764159d ([#191](https://github.com/camaeel/vault-autounseal-operator/issues/191)) ([74f011a](https://github.com/camaeel/vault-autounseal-operator/commit/74f011a4f417a9a8f28df39a153632f1166fc68a))
+* **deps:** update golang.org/x/exp digest to ee035b5 ([#194](https://github.com/camaeel/vault-autounseal-operator/issues/194)) ([cd0216c](https://github.com/camaeel/vault-autounseal-operator/commit/cd0216cd556e919ba8e3cac7d3b5f9836640bbfd))
+* **deps:** update kubernetes monorepo to v0.36.3 ([#192](https://github.com/camaeel/vault-autounseal-operator/issues/192)) ([c921d14](https://github.com/camaeel/vault-autounseal-operator/commit/c921d14f2ee3af1ec24a7d1fab05bdd7a0cf2555))
+* go.mod tidy ([f6b201a](https://github.com/camaeel/vault-autounseal-operator/commit/f6b201ad7b4e4bcd2a18fcab1e59f10afe174ee2))
+
 ## [0.2.36](https://github.com/camaeel/vault-autounseal-operator/compare/v0.2.35...v0.2.36) (2026-07-03)
 
 
