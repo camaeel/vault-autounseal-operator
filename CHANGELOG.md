@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.2.39](https://github.com/camaeel/vault-autounseal-operator/compare/v0.2.38...v0.2.39) (2026-08-20)
+
+
+### Bug Fixes
+
+* cleanup go.sum ([38ba72d](https://github.com/camaeel/vault-autounseal-operator/commit/38ba72d45a43a5bd690c97cd5f102f6f8526568e))
+* **deps:** update golang.org/x/exp digest to ca53665 ([#198](https://github.com/camaeel/vault-autounseal-operator/issues/198)) ([da93299](https://github.com/camaeel/vault-autounseal-operator/commit/da9329923e6a7ead13b8c9a9c26e25daecd2055b))
+* **deps:** update kubernetes monorepo to v0.36.4 ([#201](https://github.com/camaeel/vault-autounseal-operator/issues/201)) ([0be6f7d](https://github.com/camaeel/vault-autounseal-operator/commit/0be6f7dd4e2e47da260f3f7297976fa575ff6345))
+* **deps:** update module github.com/stretchr/testify to v1.12.1 ([#202](https://github.com/camaeel/vault-autounseal-operator/issues/202)) ([cc87f31](https://github.com/camaeel/vault-autounseal-operator/commit/cc87f315b6405a5f4755becfba96b6e5464921d6))
+
 ## [0.2.38](https://github.com/camaeel/vault-autounseal-operator/compare/v0.2.37...v0.2.38) (2026-08-13)
 
 
