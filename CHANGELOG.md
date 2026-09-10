@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.40](https://github.com/camaeel/vault-autounseal-operator/compare/v0.2.39...v0.2.40) (2026-09-10)
+
+
+### Bug Fixes
+
+* **deps:** update golang.org/x/exp digest to 85c1c22 ([#204](https://github.com/camaeel/vault-autounseal-operator/issues/204)) ([1c938fc](https://github.com/camaeel/vault-autounseal-operator/commit/1c938fc64b4e07ccf5a0b267b19403ba6bc9ce44))
+
 ## [0.2.39](https://github.com/camaeel/vault-autounseal-operator/compare/v0.2.38...v0.2.39) (2026-08-20)
 
 
