@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.2.40](https://github.com/camaeel/vault-autounseal-operator/compare/v0.2.39...v0.2.40) (2026-10-17)
+
+
+### Bug Fixes
+
+* cleanup go.sum ([e719229](https://github.com/camaeel/vault-autounseal-operator/commit/e719229a00b1246031c813596c2b0c674fef1e0b))
+* **deps:** update golang.org/x/exp digest to 85c1c22 ([#204](https://github.com/camaeel/vault-autounseal-operator/issues/204)) ([1c938fc](https://github.com/camaeel/vault-autounseal-operator/commit/1c938fc64b4e07ccf5a0b267b19403ba6bc9ce44))
+* **deps:** update module github.com/hashicorp/vault to v1.21.4 ([#157](https://github.com/camaeel/vault-autounseal-operator/issues/157)) ([5c7aba7](https://github.com/camaeel/vault-autounseal-operator/commit/5c7aba7bb95bc9e5c8c6ccc86d3606746110be0a))
+* vault deps ([caff32d](https://github.com/camaeel/vault-autounseal-operator/commit/caff32d17dafeb06f67c035d52bd51bef43b1bc9))
+
 ## [0.2.39](https://github.com/camaeel/vault-autounseal-operator/compare/v0.2.38...v0.2.39) (2026-08-20)
 
 
