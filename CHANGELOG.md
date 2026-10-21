@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.41](https://github.com/camaeel/vault-autounseal-operator/compare/v0.2.40...v0.2.41) (2026-10-21)
+
+
+### Bug Fixes
+
+* bump deps ([63c8d4f](https://github.com/camaeel/vault-autounseal-operator/commit/63c8d4f3f7676c32de0a2fb104a118b30872bf81))
+
 ## [0.2.40](https://github.com/camaeel/vault-autounseal-operator/compare/v0.2.39...v0.2.40) (2026-10-17)
 
 
